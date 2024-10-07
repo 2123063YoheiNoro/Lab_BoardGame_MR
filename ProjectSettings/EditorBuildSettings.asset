@@ -8,12 +8,15 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/SampleScene.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
-  - enabled: 1
+  - enabled: 0
     path: Assets/quest3/Samples/Meta XR Core SDK/65.0.0/Sample Scenes/ControllerModels.unity
     guid: 39cfe7aa0a2d46c47994d8d0308ec663
+  - enabled: 1
+    path: Assets/Samples/Meta XR Core SDK/65.0.0/Mixed Reality Sample/MixedReality.unity
+    guid: fc8cf684948f0654f9bb46acfbba709e
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: f43105bff7af11b4e8781a9d78c0f496, type: 2}
     UnityEditor.XR.ARCore.ARCoreSettings: {fileID: 11400000, guid: f98eafbaebb1ec344be5d527ad82b98a, type: 2}
     com.unity.xr.arfoundation.simulation_settings: {fileID: 11400000, guid: dce966ef58291134db6bae708c26afde, type: 2}
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 04f797782784f4349b98a0f9a7bebccb, type: 2}
-    com.unity.xr.openxr.settings4: {fileID: 11400000, guid: d883e222c5fcd08428fc50f39ea74a6d, type: 2}
+    com.unity.xr.openxr.settings4: {fileID: 11400000, guid: 3078e6be0b56f1f4eba69d73a457d5ed, type: 2}
