@@ -10,6 +10,7 @@ namespace UnityPython
     [DefaultExecutionOrder(-1)]
     public class PythonRunTest : MonoBehaviour
     {
+        dynamic np;
         // Start is called before the first frame update
         void Start()
         {
@@ -19,7 +20,7 @@ namespace UnityPython
 
         private void RunMahjonScript()
         {
-            using dynamic np = Py.Import("numpy");
+            np = Py.Import("numpy");
             float tmp = np.cos(np.pi * 2);
             Debug.Log("np.cos(np.pi * 2) =" + tmp);
 
