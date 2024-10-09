@@ -36,7 +36,7 @@ public class TilesReceiver: MonoBehaviour
 
         //オブジェクトに変換.
         predictions = JsonUtility.FromJson<Predictions>(fixedText);
-        Debug.Log(fixedText);
+        Debug.Log(text);
     }
 
 }
