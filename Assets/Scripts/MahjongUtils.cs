@@ -23,11 +23,11 @@ public class MahjongUtils
     /// </summary>
     /// <param name="predictions"></param>
     /// <returns></returns>
-    public string ConvertPredictionsTo136Array(IPredictions predictions)
+    public int[] ConvertPredictionsTo136Array(IPredictions predictions)
     {
         //萬子、筒子、索子、字牌の番号を割り当てる文字列
         string man = "", sou = "", pin = "", honor = "";
-        string result = "";
+        int[] result;
 
         List<Prediction> predictionsList = predictions.GetAllPredictions();
         foreach (Prediction p in predictionsList)
@@ -42,25 +42,63 @@ public class MahjongUtils
             switch (group)
             {
                 case 'm':
-                    man += group.ToString();
+                    man += num.ToString();
                     break;
                 case 'p':
-                    pin += group.ToString();
+                    pin += num.ToString();
                     break;
                 case 's':
-                    sou += group.ToString();
+                    sou += num.ToString();
                     break;
                 case 'z':
-                    honor += group.ToString();
+                    honor += num.ToString();
                     break;
                 default:
                     break;
             }
-
-            //mahjongライブラリの関数で変換する
-            result = mj_tiles.TilesConverter.string_to_136_array(man, pin, sou, honor);
         }
 
+        Debug.Log("man : " + man);
+        Debug.Log("pin : " + pin);
+        Debug.Log("sou : " + sou);
+        Debug.Log("honor : " + honor);
+
+        //mahjongライブラリの関数で変換する
+        result = mj_tiles.TilesConverter.string_to_136_array(man, pin, sou, honor, true);
         return result;
+    }
+
+    /// <summary>
+    /// 136配列を34配列に変換する
+    /// </summary>
+    /// <param name="tileArray_136"></param>
+    /// <returns></returns>
+    public int[] To_34_array(int[] tileArray_136)
+    {
+        int[] result = mj_tiles.TilesConverter.to_34_array(tileArray_136);
+        return result;
+    }
+
+    /// <summary>
+    /// 34配列からシャンテン数を計算する
+    /// </summary>
+    /// <param name="tileArray_34"></param>
+    /// <returns></returns>
+    public int GetShanten_from34Array(int[] tileArray_34)
+    {
+        var shantenCalculator = mj_shanten.Shanten();
+        int shantenresult = shantenCalculator.calculate_shanten(tileArray_34); ;
+        return shantenresult;
+    }
+
+    /// <summary>
+    /// 136配列からシャンテン数を計算する
+    /// </summary>
+    /// <param name="tileArray_136"></param>
+    /// <returns></returns>
+    public int GetShanten_from136Array(int[] tileArray_136)
+    {
+        //136配列を34配列に変換してシャンテン計算関数に投げる
+        return GetShanten_from34Array(To_34_array(tileArray_136));
     }
 }
