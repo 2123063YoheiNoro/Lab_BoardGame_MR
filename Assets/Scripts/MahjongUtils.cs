@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Python.Runtime;
-//using dynamic mj_tiles = Py.Import("mahjong.tile");
+using System.Linq;
 
 
 public class MahjongUtils
@@ -23,11 +23,10 @@ public class MahjongUtils
     /// </summary>
     /// <param name="predictions"></param>
     /// <returns></returns>
-    public int[] ConvertPredictionsTo136Array(IPredictions predictions)
+    public dynamic ConvertPredictionsTo136Array(IPredictions predictions)
     {
         //萬子、筒子、索子、字牌の番号を割り当てる文字列
         string man = "", sou = "", pin = "", honor = "";
-        int[] result;
 
         List<Prediction> predictionsList = predictions.GetAllPredictions();
         foreach (Prediction p in predictionsList)
@@ -58,14 +57,40 @@ public class MahjongUtils
             }
         }
 
-        Debug.Log("man : " + man);
-        Debug.Log("pin : " + pin);
-        Debug.Log("sou : " + sou);
-        Debug.Log("honor : " + honor);
-
         //mahjongライブラリの関数で変換する
-        result = mj_tiles.TilesConverter.string_to_136_array(man, pin, sou, honor, true);
+        var result = mj_tiles.TilesConverter.string_to_136_array(man, pin, sou, honor, true);
         return result;
+    }
+
+    public dynamic ConvertPredictionsTo136Array(Tiles tiles)
+    {
+        //萬子、筒子、索子、字牌の番号を割り当てる文字列
+        string man = "", sou = "", pin = "", honor = "";
+
+        foreach (Tile t in tiles.tiles)
+        {
+            switch (t.type)
+            {
+                case Tile.TileType.MAN:
+                    man += t.number.ToString();
+                    break;
+                case Tile.TileType.PIN:
+                    pin += t.number.ToString();
+                    break;
+                case Tile.TileType.SOU:
+                    sou += t.number.ToString();
+                    break;
+                case Tile.TileType.HONOR:
+                    honor += t.number.ToString();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        var result = mj_tiles.TilesConverter.string_to_136_array(man, pin, sou, honor, true);
+        return result;
+
     }
 
     /// <summary>
@@ -73,9 +98,9 @@ public class MahjongUtils
     /// </summary>
     /// <param name="tileArray_136"></param>
     /// <returns></returns>
-    public int[] To_34_array(int[] tileArray_136)
+    public dynamic To_34_array(dynamic tileArray_136)
     {
-        int[] result = mj_tiles.TilesConverter.to_34_array(tileArray_136);
+        var result = mj_tiles.TilesConverter.to_34_array(tileArray_136);
         return result;
     }
 
@@ -84,10 +109,16 @@ public class MahjongUtils
     /// </summary>
     /// <param name="tileArray_34"></param>
     /// <returns></returns>
-    public int GetShanten_from34Array(int[] tileArray_34)
+    public int GetShanten_from34Array(dynamic tileArray_34)
     {
+        int[] LengthCheckArray = tileArray_34;
+        if (LengthCheckArray.Sum() > 14)
+        {
+            Debug.LogWarning("牌の数が多すぎます");
+            return int.MaxValue;
+        }
         var shantenCalculator = mj_shanten.Shanten();
-        int shantenresult = shantenCalculator.calculate_shanten(tileArray_34); ;
+        int shantenresult = shantenCalculator.calculate_shanten(tileArray_34);
         return shantenresult;
     }
 
@@ -96,7 +127,7 @@ public class MahjongUtils
     /// </summary>
     /// <param name="tileArray_136"></param>
     /// <returns></returns>
-    public int GetShanten_from136Array(int[] tileArray_136)
+    public int GetShanten_from136Array(dynamic tileArray_136)
     {
         //136配列を34配列に変換してシャンテン計算関数に投げる
         return GetShanten_from34Array(To_34_array(tileArray_136));
