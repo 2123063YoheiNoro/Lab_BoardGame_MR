@@ -498,11 +498,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae700d5c3e6958448a4d9e06bd51ee74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  man: 
-  pin: 
-  sou: 
-  honor: 
-  shanten: 0
+  shanten_man: 
+  shanten_pin: 
+  shanten_sou: 
+  shanten_honor: 
+  shanten_melds: []
+  shanten_value: 0
+  shanten_effectiveTiles: []
+  meldType: 0
+  meld_man: 
+  meld_pin: 
+  meld_sou: 
+  meld_honor: 
+  meld_isValid: 0
 --- !u!1 &1669171778
 GameObject:
   m_ObjectHideFlags: 0

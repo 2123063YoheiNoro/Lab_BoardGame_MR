@@ -5,13 +5,24 @@ using UnityEngine.AddressableAssets;
 
 public class Test_MJUtil : MonoBehaviour
 {
-    [SerializeField] private string man;
-    [SerializeField] private string pin;
-    [SerializeField] private string sou;
-    [SerializeField] private string honor;
+    //シャンテン数計算用変数
+    [SerializeField] private string shanten_man;
+    [SerializeField] private string shanten_pin;
+    [SerializeField] private string shanten_sou;
+    [SerializeField] private string shanten_honor;
+    [SerializeField] private List<Meld> shanten_melds;
+    [SerializeField] private int shanten_value;
+    [SerializeField] private List<Tile> shanten_effectiveTiles;
     private string latestStr = "";
 
-    [SerializeField] private int shanten;
+    //鳴きテスト用変数
+    [SerializeField] private Meld.MeldType meldType = Meld.MeldType.CHI;
+    [SerializeField] private string meld_man;
+    [SerializeField] private string meld_pin;
+    [SerializeField] private string meld_sou;
+    [SerializeField] private string meld_honor;
+    [SerializeField] private bool meld_isValid;
+    private string meld_latestStr = "";
 
     MahjongUtils mahjongUtils;
     void Start()
@@ -26,13 +37,24 @@ public class Test_MJUtil : MonoBehaviour
 
     private void Update()
     {
+        //シャンテン数テスト
         //値が変更されたときだけ実行する
-        if (man + pin + sou + honor != latestStr)
+        if (shanten_man + shanten_pin + shanten_sou + shanten_honor != latestStr)
         {
-            Tiles tiles = new(man, pin, sou, honor);
-            shanten = GetShantenFromTiles(tiles);
+            Tiles tiles = new(shanten_man, shanten_pin, shanten_sou, shanten_honor,shanten_melds);
+            shanten_value = mahjongUtils.GetShanten(tiles);
+            shanten_effectiveTiles = mahjongUtils.GetEffectiveTiles(tiles);
         }
-        latestStr = man + pin + sou + honor;
+        latestStr = shanten_man + shanten_pin + shanten_sou + shanten_honor;
+
+
+        //鳴きテスト
+        if (meld_man + meld_pin + meld_sou + meld_honor != meld_latestStr)
+        {
+            Meld meld = new Meld(meldType, meld_man, meld_pin, meld_sou, meld_honor);
+            meld_isValid = meld.IsValid();
+        }
+        meld_latestStr = meld_man + meld_pin + meld_sou + meld_honor;
     }
 
     private void Convert136Test()
@@ -52,7 +74,7 @@ public class Test_MJUtil : MonoBehaviour
         //IPredictionを136配列に変換する
         var result = mahjongUtils.ConvertPredictionsTo136Array(data);
         int shanten = mahjongUtils.GetShanten_from136Array(result);
-        Debug.Log("シャンテン : "+shanten);
+        Debug.Log("シャンテン : " + shanten);
 
         Tiles testTiles1 = new Tiles("2345", "2255589", "45");
         shanten = mahjongUtils.GetShanten_from136Array(mahjongUtils.ConvertPredictionsTo136Array(testTiles1));

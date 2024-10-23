@@ -67,21 +67,21 @@ public class MahjongUtils
         //δέqA“›qAυqA”v‚Μ”Τ†‚π„‚θ“–‚Δ‚ι•¶—ρ
         string man = "", sou = "", pin = "", honor = "";
 
-        foreach (Tile t in tiles.tiles)
+        foreach (Tile t in tiles.TilesList)
         {
             switch (t.type)
             {
                 case Tile.TileType.MAN:
-                    man += t.number.ToString();
+                    man += t.Number.ToString();
                     break;
                 case Tile.TileType.PIN:
-                    pin += t.number.ToString();
+                    pin += t.Number.ToString();
                     break;
                 case Tile.TileType.SOU:
-                    sou += t.number.ToString();
+                    sou += t.Number.ToString();
                     break;
                 case Tile.TileType.HONOR:
-                    honor += t.number.ToString();
+                    honor += t.Number.ToString();
                     break;
                 default:
                     break;
@@ -109,7 +109,7 @@ public class MahjongUtils
     /// </summary>
     /// <param name="tileArray_34"></param>
     /// <returns></returns>
-    public int GetShanten_from34Array(dynamic tileArray_34)
+    public int GetShanten_from34Array(dynamic tileArray_34, bool use_chiitoitsu = true, bool use_kokushi = true)
     {
         int[] LengthCheckArray = tileArray_34;
         if (LengthCheckArray.Sum() > 14)
@@ -118,7 +118,7 @@ public class MahjongUtils
             return int.MaxValue;
         }
         var shantenCalculator = mj_shanten.Shanten();
-        int shantenresult = shantenCalculator.calculate_shanten(tileArray_34);
+        int shantenresult = shantenCalculator.calculate_shanten(tileArray_34, use_chiitoitsu, use_kokushi);
         return shantenresult;
     }
 
@@ -127,9 +127,83 @@ public class MahjongUtils
     /// </summary>
     /// <param name="tileArray_136"></param>
     /// <returns></returns>
-    public int GetShanten_from136Array(dynamic tileArray_136)
+    public int GetShanten_from136Array(dynamic tileArray_136, bool use_chiitoitsu = true, bool use_kokushi = true)
     {
         //136”z—ρ‚π34”z—ρ‚Ι•Ο·‚µ‚ΔƒVƒƒƒ“ƒeƒ“vZΦ”‚Ι“‚°‚ι
-        return GetShanten_from34Array(To_34_array(tileArray_136));
+        return GetShanten_from34Array(To_34_array(tileArray_136), use_chiitoitsu, use_kokushi);
     }
+
+    /// <summary>
+    /// TilesƒNƒ‰ƒX‚©‚ηƒVƒƒƒ“ƒeƒ“”‚πvZ‚·‚ι
+    /// </summary>
+    /// <param name="tiles"></param>
+    /// <returns></returns>
+    public int GetShanten(Tiles tiles)
+    {
+        bool _use_chiitoitsu = true;
+        bool _use_kokushi = true;
+
+        //•›I‚ª‚ ‚ικ‡
+        if (tiles.MeldsList.Count > 0)
+        {
+            //µ‘Ξq‚Ζ‘m–³‘o‚Νl—¶‚©‚ηO‚·
+            _use_chiitoitsu = false;
+            _use_kokushi = false;
+
+            foreach (Meld m in tiles.MeldsList)
+            {
+                if (m.IsValid() == false)
+                {
+                    Debug.LogWarning("•s³‚Θ•›I‚ªά‚ά‚κ‚Δ‚Ά‚ά‚·");
+                    return int.MaxValue;
+                }
+            }
+        }
+
+        //”v‚Μ”‚ª14‚π’΄‚¦‚ικ‡‚Ν’†’f‚·‚ι
+        //‘” = ”v‚Μ” + •›I‚Μ” * 3
+        int tileTotalCount = tiles.TilesList.Count + tiles.MeldsList.Count * 3; //Εγ‚Μ*3‚Ν•›I‚ΕN‚³‚κ‚ιΕ¬‚Μ”v‚Μ”@”²‚«ƒhƒ‰‚Νl—¶‚µ‚Δ‚Ά‚Θ‚Ά
+        if (tileTotalCount > 14)
+        {
+            Debug.LogWarning("”v‚Μ”‚ª‘½‚·‚¬‚ά‚·");
+            return int.MaxValue;
+        }
+
+        var array136 = ConvertPredictionsTo136Array(tiles);
+        return GetShanten_from136Array(array136, _use_chiitoitsu, _use_kokushi);
+    }
+
+    /// <summary>
+    /// —Lψ”v‚π•Τ‚·Φ”
+    /// </summary>
+    /// <returns></returns>
+    public List<Tile> GetEffectiveTiles(Tiles tiles)
+    {
+        //ƒVƒƒƒ“ƒeƒ“”‚Μ•]‰Ώ‚ª‰Β”\‚Θ–‡”-1 ‚π’΄‚¦‚Δ‚Ά‚ικ‡‚ΝI—Ή‚·‚ι
+        if (tiles.TilesList.Count + tiles.MeldsList.Count * 3 > 13)
+        {
+            Debug.LogWarning("”v‚Μ”‚ª‘½‚·‚¬‚ά‚·");
+            return null;
+        }
+
+        List<Tile> result = new();
+        int baseShanten = GetShanten(tiles);    //•]‰Ώ‚Μξ€‚Ζ‚Θ‚ιƒVƒƒƒ“ƒeƒ“”
+        Tiles tmpTiles = new Tiles(tiles);  //‚Ά‚λ‚Ά‚λM‚ι‚Μ‚ΕTiles‚Μ’l‚πƒRƒs[‚µ‚½ƒƒXƒg‚πg‚¤
+
+        //37ν—ή‘S‚Δ‚Μ”v‚π1–‡’Η‰Α‚µ‚½‚Ζ‚«‚ΜƒVƒƒƒ“ƒeƒ“”‚Μ•Ο‰»‚πξ‚Ι—Lψ”v‚πζ“Ύ‚·‚ι
+        int maxTileID = 37;
+        for (int i = 0; i < maxTileID; i++)
+        {
+            Tile t = new Tile(i);
+            tmpTiles.AddTileToList(t);
+            //ƒVƒƒƒ“ƒeƒ“”‚ªΈ‚Α‚Δ‚Ά‚½κ‡‚Ν•Τ‚θ’l‚Ι’Η‰Α‚·‚ι
+            if (GetShanten(tmpTiles) < baseShanten)
+            {
+                result.Add(t);
+            }
+            tmpTiles.RemoveTileFromList(t);
+        }
+        return result;
+    }
+
 }
