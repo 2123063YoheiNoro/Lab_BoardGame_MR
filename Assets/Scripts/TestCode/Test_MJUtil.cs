@@ -13,15 +13,25 @@ public class Test_MJUtil : MonoBehaviour
     [SerializeField] private List<Meld> shanten_melds;
     [SerializeField] private int shanten_value;
     [SerializeField] private List<Tile> shanten_effectiveTiles;
-
-    [SerializeField] private string dora_man;
-    [SerializeField] private string dora_pin;
-    [SerializeField] private string dora_sou;
-    [SerializeField] private string dora_honor;
-    [SerializeField] private int cost_main;
-    [SerializeField] private int cost_additional;
-    [SerializeField] private HandConfig hand_config;
     private string latestStr = "";
+
+    [SerializeField] List<Tile> doraList;
+    public bool is_tsumo = false;
+    public bool is_riichi = false;
+    public bool is_ippatsu = false;
+    public bool is_rinshan = false;
+    public bool is_chankan = false;
+    public bool is_haitei = false;
+    public bool is_houtei = false;
+    public bool is_daburu_riichi = false;
+    public bool is_nagashi_mangan = false;
+    public bool is_tenhou = false;
+    public bool is_renhou = false;
+    public bool is_chiihou = false;
+    public bool is_open_riichi = false;
+    [SerializeField] private int cost_main;
+    [SerializeField] private int cost_adtional;
+    private HandResponse handResponse;
 
     //鳴きテスト用変数
     [SerializeField] private Meld.MeldType meldType = Meld.MeldType.CHI;
@@ -53,12 +63,27 @@ public class Test_MJUtil : MonoBehaviour
             shanten_value = mahjongUtils.GetShanten(tiles);
             shanten_effectiveTiles = mahjongUtils.GetEffectiveTiles(tiles);
 
-            /*
-            //点数計算テスト
-            HandResponse handResponse = mahjongUtils.EstimateHandValue(tiles, tiles.TilesList[0], null, hand_config);
-            cost_main=handResponse.cost_main;
-            cost_additional = handResponse.cost_aditional;
-            */
+            HandConfig config= new HandConfig();
+            config.is_tsumo = is_tsumo;
+            config.is_riichi = is_riichi;
+            config.is_ippatsu = is_ippatsu;
+            config.is_chankan = is_chankan;
+            config.is_daburu_riichi= is_daburu_riichi;
+            config.is_rinshan = is_rinshan;
+            config.is_haitei = is_haitei;
+            config.is_houtei = is_houtei;
+            config.is_nagashi_mangan = is_nagashi_mangan;
+            config.is_tenhou = is_tenhou;
+            config.is_chiihou = is_chiihou;
+            config.is_renhou = is_renhou;
+            config.is_open_riichi=is_open_riichi;
+
+            if (tiles.TilesList.Count == 14)
+            {
+                handResponse = mahjongUtils.EstimateHandValue(tiles, tiles.TilesList[0], doraList, config);
+                cost_main = handResponse.cost_main;
+                cost_adtional = handResponse.cost_aditional;
+            }
         }
         latestStr = shanten_man + shanten_pin + shanten_sou + shanten_honor;
 

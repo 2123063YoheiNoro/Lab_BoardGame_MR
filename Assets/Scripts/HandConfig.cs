@@ -2,9 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Python.Runtime;
-using System;
-
-[Serializable]
 public class HandConfig
 {
     private static int NONE = -1;

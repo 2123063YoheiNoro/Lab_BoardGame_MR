@@ -246,11 +246,25 @@ public class MahjongUtils
         dynamic _configObject = config.GetHandConfig();
 
         //‚±‚±‚ÅŒvŽZ
-        dynamic result = _calculator.estimate_hand_value(_tile_136Array, _winTile_136Array, _meldObjects, _dora_136Array, _configObject);
+        dynamic result = _calculator.estimate_hand_value(
+            _tile_136Array,
+            _winTile_136Array[0],
+            "",     //–Â‚«‚Í‚¢‚Á‚½‚ñ•Û—¯‚µ‚Ä‚¨‚­
+            _dora_136Array,
+            _configObject);
+        /*
+        result= _calculator.estimate_hand_value(
+            mj_tiles.TilesConverter.string_to_136_array("234555", "555", "22555"),
+            mj_tiles.TilesConverter.string_to_136_array("", "", "5")[0],
+            "",
+            mj_tiles.TilesConverter.string_to_136_array("4", "", ""),
+            "");
+        */
 
         //dynamic resul ‚©‚ç HandConigƒNƒ‰ƒX‚Ö‚Ì•ÏŠ·
+        Debug.Log(result.cost["main"]);
         _handResponse.cost_main = result.cost["main"];
-        _handResponse.cost_aditional = result.cost["additionl"];
+        _handResponse.cost_aditional = result.cost["additional"];
         _handResponse.han=result.han;
         _handResponse.fu=result.fu;
         _handResponse.yaku=result.yaku;
