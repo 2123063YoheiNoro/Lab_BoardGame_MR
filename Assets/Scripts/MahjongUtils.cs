@@ -206,4 +206,56 @@ public class MahjongUtils
         return result;
     }
 
+    /// <summary>
+    /// 点数計算を行う関数
+    /// </summary>
+    /// <param name="tiles"></param>
+    /// <param name="win_tile"></param>
+    /// <param name="dora"></param>
+    /// <param name="config"></param>
+    /// <returns>HandResponseオブジェクト</returns>
+    public HandResponse EstimateHandValue(Tiles tiles, Tile win_tile, List<Tile> dora, HandConfig config)
+    {
+        dynamic _calculator = mj_calculate.HandCalculator();
+        HandResponse _handResponse = new HandResponse();
+
+        //引数1   tiles: array with 14 tiles in 136-tile format
+        dynamic _tile_136Array = ConvertPredictionsTo136Array(tiles);
+
+        //引数2   win_tile: 136 format tile that caused win (ron or tsumo)
+        Tiles win_tile_inTiles = new Tiles();
+        win_tile_inTiles.AddTileToList(win_tile);
+        dynamic _winTile_136Array = ConvertPredictionsTo136Array(win_tile_inTiles);
+
+        //引数3   array with Meld objects
+        List<dynamic> _meldObjects =new();
+        foreach(Meld m in tiles.MeldsList)
+        {
+            _meldObjects.Add(m.GetMeldObject());
+        }
+
+        //引数4   array of tiles in 136-tile format
+        Tiles dora_inTiles = new Tiles();
+        foreach (Tile tile in dora)
+        {
+            dora_inTiles.AddTileToList(tile);
+        }
+        dynamic _dora_136Array = ConvertPredictionsTo136Array(dora_inTiles);
+
+        //引数5   HandConfig object
+        dynamic _configObject = config.GetHandConfig();
+
+        //ここで計算
+        dynamic result = _calculator.estimate_hand_value(_tile_136Array, _winTile_136Array, _meldObjects, _dora_136Array, _configObject);
+
+        //dynamic resul から HandConigクラスへの変換
+        _handResponse.cost_main = result.cost["main"];
+        _handResponse.cost_aditional = result.cost["additionl"];
+        _handResponse.han=result.han;
+        _handResponse.fu=result.fu;
+        _handResponse.yaku=result.yaku;
+
+        return _handResponse;
+    }
+
 }

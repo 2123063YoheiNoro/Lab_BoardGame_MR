@@ -9,8 +9,7 @@ using System;
 public class Meld
 {
     //pythonライブラリインポート用の変数
-    private dynamic mjpy_utils;
-    private dynamic mjpy_tiles;
+    private dynamic mj_meld;
     public enum MeldType
     {
         CHI,
@@ -25,19 +24,15 @@ public class Meld
 
     public Meld(MeldType type, Tiles tiles)
     {
+        mj_meld = Py.Import("mahjong.meld");
         this.meldType = type;
         this.tiles = tiles;
-
-        mjpy_utils = Py.Import("mahjong.utils");
-        mjpy_tiles = Py.Import("mahjong.tile");
     }
     public Meld(MeldType type, string man, string pin, string sou, string honor)
     {
+        mj_meld = Py.Import("mahjong.meld");
         this.meldType = type;
         tiles = new Tiles(man, pin, sou, honor);
-
-        mjpy_utils = Py.Import("mahjong.utils");
-        mjpy_tiles = Py.Import("mahjong.tile");
     }
 
     //鳴きの種類と牌の組み合わせが有効かどうかを返す
@@ -166,5 +161,51 @@ public class Meld
         {
             return false;
         }
+    }
+
+    /// <summary>
+    /// pythonライブラリのmeldオブジェクトに変換して返す関数
+    /// </summary>
+    /// <returns></returns>
+    public dynamic GetMeldObject()
+    {
+        MahjongUtils mahjongUtils = new MahjongUtils();
+        //引数1 meld_type
+        dynamic _meld_type;
+        switch (meldType)
+        {
+            case MeldType.CHI:
+                _meld_type = mj_meld.Meld.CHI;
+                break;
+
+            case MeldType.PON:
+                _meld_type = mj_meld.Meld.PON;
+                break;
+
+            case MeldType.ANKAN:
+            case MeldType.DAIMINKAN:
+                _meld_type = mj_meld.Meld.KAN;
+                break;
+
+            case MeldType.SHOUMINKAN:
+                _meld_type = mj_meld.Meld.SHOUMINKAN;
+                break;
+            default:
+                _meld_type= mj_meld.Meld.NUKI;
+                break;
+        }
+
+        //引数2   tiles136Array
+        dynamic _tiles136Array=mahjongUtils.ConvertPredictionsTo136Array(tiles);
+
+        //引数3   opend
+        bool _opend = true;
+        if(meldType == MeldType.ANKAN)
+        {
+            _opend = false;
+        }
+
+
+        return mj_meld.Meld(_meld_type,_tiles136Array,_opend);
     }
 }

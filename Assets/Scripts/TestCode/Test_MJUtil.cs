@@ -13,6 +13,14 @@ public class Test_MJUtil : MonoBehaviour
     [SerializeField] private List<Meld> shanten_melds;
     [SerializeField] private int shanten_value;
     [SerializeField] private List<Tile> shanten_effectiveTiles;
+
+    [SerializeField] private string dora_man;
+    [SerializeField] private string dora_pin;
+    [SerializeField] private string dora_sou;
+    [SerializeField] private string dora_honor;
+    [SerializeField] private int cost_main;
+    [SerializeField] private int cost_additional;
+    [SerializeField] private HandConfig hand_config;
     private string latestStr = "";
 
     //鳴きテスト用変数
@@ -41,9 +49,16 @@ public class Test_MJUtil : MonoBehaviour
         //値が変更されたときだけ実行する
         if (shanten_man + shanten_pin + shanten_sou + shanten_honor != latestStr)
         {
-            Tiles tiles = new(shanten_man, shanten_pin, shanten_sou, shanten_honor,shanten_melds);
+            Tiles tiles = new(shanten_man, shanten_pin, shanten_sou, shanten_honor, shanten_melds);
             shanten_value = mahjongUtils.GetShanten(tiles);
             shanten_effectiveTiles = mahjongUtils.GetEffectiveTiles(tiles);
+
+            /*
+            //点数計算テスト
+            HandResponse handResponse = mahjongUtils.EstimateHandValue(tiles, tiles.TilesList[0], null, hand_config);
+            cost_main=handResponse.cost_main;
+            cost_additional = handResponse.cost_aditional;
+            */
         }
         latestStr = shanten_man + shanten_pin + shanten_sou + shanten_honor;
 

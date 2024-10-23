@@ -1,18 +1,23 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HandResponse : MonoBehaviour
+[Serializable]
+public class HandResponse
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public int cost_main;
+    public int cost_aditional;
+    public int han;
+    public int fu;
+    public List<string> yaku;
 
-    // Update is called once per frame
-    void Update()
+    public HandResponse(int cost_main = 0, int cost_aditional = 0, int han = 0, int fu = 0, List<string> yaku = null)
     {
-        
+        this.cost_main = cost_main;
+        this.cost_aditional = cost_aditional;
+        this.han = han;
+        this.fu = fu;
+        this.yaku = yaku;
     }
 }
