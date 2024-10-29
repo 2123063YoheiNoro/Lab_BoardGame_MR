@@ -8,7 +8,7 @@ using System.Text;
 using UnityEngine;
 using static DynamicSceneManagerHelper.SceneSnapshot;
 
-public class Mock_TileData : MonoBehaviour, IPredictions
+public class Mock_TileData :IPredictions
 {
     private Predictions _predictions;
 
@@ -21,6 +21,10 @@ public class Mock_TileData : MonoBehaviour, IPredictions
         return _predictions.GetAllPredictions();
     }
 
+    /// <summary>
+    /// jsonファイルから麻雀牌データを生成する
+    /// </summary>
+    /// <param name="jsonData"></param>
     public Mock_TileData(string jsonData)
     {
         _predictions = Convert_Json_To_Predictions(jsonData);
@@ -33,8 +37,6 @@ public class Mock_TileData : MonoBehaviour, IPredictions
         //上の変換で「class_id」が「class_name_id」に変わってしまうので修正する.
         fixedText = fixedText.Replace("class_name_id", "class_id");
 
-        Debug.Log(jsonData);
-        Debug.Log(fixedText);
         //オブジェクトに変換.
         Predictions predictions = JsonUtility.FromJson<Predictions>(fixedText);
         return predictions;
