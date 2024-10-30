@@ -116,7 +116,7 @@ public class MahjongUtils
         if (LengthCheckArray.Sum() > 14)
         {
             Debug.LogWarning("牌の数が多すぎます");
-            return int.MaxValue;
+            return int.MinValue;
         }
         var shantenCalculator = mj_shanten.Shanten();
         int shantenresult = shantenCalculator.calculate_shanten(tileArray_34, use_chiitoitsu, use_kokushi);
@@ -156,7 +156,7 @@ public class MahjongUtils
                 if (m.IsValid() == false)
                 {
                     Debug.LogWarning("不正な副露が含まれています");
-                    return int.MaxValue;
+                    return int.MinValue;
                 }
             }
         }
@@ -167,7 +167,7 @@ public class MahjongUtils
         if (tileTotalCount > 14)
         {
             Debug.LogWarning("牌の数が多すぎます");
-            return int.MaxValue;
+            return int.MinValue;
         }
 
         var array136 = ConvertPredictionsTo136Array(tiles);
@@ -215,7 +215,7 @@ public class MahjongUtils
     /// <param name="dora"></param>
     /// <param name="config"></param>
     /// <returns>HandResponseオブジェクト</returns>
-    public HandResponse EstimateHandValue(Tiles tiles, Tile win_tile, List<Tile> dora=null, HandConfig config=null)
+    public HandResponse EstimateHandValue(Tiles tiles, Tile win_tile, List<Tile> dora = null, HandConfig config = null)
     {
         dynamic _calculator = mj_calculate.HandCalculator();
         HandResponse _handResponse = new HandResponse();
@@ -229,8 +229,8 @@ public class MahjongUtils
         dynamic _winTile_136Array = ConvertPredictionsTo136Array(win_tile_inTiles);
 
         //引数3   array with Meld objects
-        List<dynamic> _meldObjects =new();
-        foreach(Meld m in tiles.MeldsList)
+        List<dynamic> _meldObjects = new();
+        foreach (Meld m in tiles.MeldsList)
         {
             _meldObjects.Add(m.GetMeldObject());
         }
@@ -284,19 +284,12 @@ public class MahjongUtils
             Debug.LogError("点数計算が失敗しました");
             return null;
         }
-        Debug.Log(result.cost["main"]);
 
-        MemberInfo[] menberInfo = result.yaku.GetType().GetMembers();
-        foreach(MemberInfo m in menberInfo)
-        {
-            //Debug.Log(m);
-        }
-
-        _handResponse.cost_main = result.cost["main"];
-        _handResponse.cost_aditional = result.cost["additional"];
-        _handResponse.han=result.han;
-        _handResponse.fu=result.fu;
-        _handResponse.yaku= result.yaku.ToString();
+        _handResponse.cost_main = result?.cost?["main"] ?? 0;
+        _handResponse.cost_aditional = result?.cost?["additional"] ?? 0;
+        _handResponse.han = result?.han ?? 0;
+        _handResponse.fu = result?.fu ?? 0;
+        _handResponse.yaku = result?.yaku?.ToString() ?? "";
 
         return _handResponse;
     }

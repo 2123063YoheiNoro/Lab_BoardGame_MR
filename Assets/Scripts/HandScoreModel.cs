@@ -1,3 +1,6 @@
+//**************************************************
+//牌の認識から自動で得点を計算するクラス
+//**************************************************
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,7 +10,7 @@ public class HandScoreModel : MonoBehaviour
 {
     private TilesReceiver tilesReceiver;
     private MahjongUtils mahjongUtils;
-    public ReactiveProperty<HandResponse> rpHandResponse=new();
+    public ReactiveProperty<HandResponse> rpHandResponse = new();
     private HandResponse handResponse;
 
 
@@ -23,9 +26,15 @@ public class HandScoreModel : MonoBehaviour
 
     private void OnPredictionReceived(IPredictions predictions)
     {
-        Debug.Log("OnPredictionReceived");
+        if (mahjongUtils == null)
+        {
+            mahjongUtils = new();
+        }
         Tiles tiles = ConvertPredictionsToTiles(predictions);
-        if (tiles.IsValidHand())
+        //シャンテン数が-1のときに点数計算を行う
+        //和了時にシャンテン数が-1になる
+        int shantenCount = mahjongUtils.GetShanten(tiles);
+        if (shantenCount == -1)
         {
             Debug.Log("点数計算開始");
             rpHandResponse.Value = mahjongUtils.EstimateHandValue(tiles, tiles.TilesList[0], null, null);

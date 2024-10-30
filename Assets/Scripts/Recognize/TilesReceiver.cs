@@ -13,7 +13,10 @@ public class TilesReceiver : MonoBehaviour
     IPEndPoint remoteEP = null;
     public Predictions predictions;
     public Subject<Predictions> subject = new();
+    //牌の認識結果のリアクティブプロパティ　牌の座標とか向きを取得したい場合に使う
     public ReactiveProperty<Predictions> rpPredictions;
+    //手牌のリアクティブプロパティ　牌の種類のみ必要な場合に使う　鳴きには未対応
+    public ReactiveProperty<Tiles> rpTiles;
 
 
     void Start()
@@ -29,6 +32,7 @@ public class TilesReceiver : MonoBehaviour
             {
                 predictions = p;
                 rpPredictions.Value = p;
+                rpTiles.Value = new Tiles(p);
             })
             .AddTo(this);
 
