@@ -68,7 +68,7 @@ public class Tile : IEquatable<Tile>
 /// 複数の牌をまとめて扱うためのクラス
 /// </summary>
 [Serializable]
-public class Tiles
+public class Tiles:IEquatable<Tiles>
 {
     public Tiles(string man = "", string pin = "", string sou = "", string honor = "", List<Meld> melds = null)
     {
@@ -91,6 +91,12 @@ public class Tiles
     {
         TilesList = new(tiles.TilesList);
         MeldsList = new(tiles.MeldsList);
+    }
+
+    public Tiles()
+    {
+        TilesList = new();
+        MeldsList = new();
     }
 
     /// <summary>
@@ -147,6 +153,31 @@ public class Tiles
         return result;
     }
 
+    /// <summary>
+    /// 現在の手牌で点数計算が可能かを返す関数
+    /// </summary>
+    /// <returns></returns>
+    public bool IsValidHand()
+    {
+        //手牌と鳴き合わせて14枚ならあがれる
+        //カンも3枚組として解釈すれば14固定で大丈夫
+        int validTileCount = 14;
+        int count = TilesList.Count + MeldsList.Count * 3;
+        if (count == validTileCount)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public bool Equals(Tiles other)
+    {
+        return TilesList.SequenceEqual(other.TilesList)
+            &&MeldsList.SequenceEqual(other.MeldsList);
+    }
 
     [field: SerializeField] public List<Tile> TilesList { get; private set; }
 

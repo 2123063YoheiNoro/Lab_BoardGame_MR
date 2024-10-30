@@ -6,7 +6,7 @@ using System.Linq;
 using System;
 
 [Serializable]
-public class Meld
+public class Meld : IEquatable<Meld>
 {
     //pythonライブラリインポート用の変数
     private dynamic mj_meld;
@@ -191,21 +191,27 @@ public class Meld
                 _meld_type = mj_meld.Meld.SHOUMINKAN;
                 break;
             default:
-                _meld_type= mj_meld.Meld.NUKI;
+                _meld_type = mj_meld.Meld.NUKI;
                 break;
         }
 
         //引数2   tiles136Array
-        dynamic _tiles136Array=mahjongUtils.ConvertPredictionsTo136Array(tiles);
+        dynamic _tiles136Array = mahjongUtils.ConvertPredictionsTo136Array(tiles);
 
         //引数3   opend
         bool _opend = true;
-        if(meldType == MeldType.ANKAN)
+        if (meldType == MeldType.ANKAN)
         {
             _opend = false;
         }
 
 
-        return mj_meld.Meld(_meld_type,_tiles136Array,_opend);
+        return mj_meld.Meld(_meld_type, _tiles136Array, _opend);
+    }
+
+    bool IEquatable<Meld>.Equals(Meld other)
+    {
+        return meldType == other.meldType
+            && tiles == other.tiles;
     }
 }

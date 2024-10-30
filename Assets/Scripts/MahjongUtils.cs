@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Python.Runtime;
 using System.Linq;
+using System.Reflection;
 
 
 public class MahjongUtils
@@ -214,7 +215,7 @@ public class MahjongUtils
     /// <param name="dora"></param>
     /// <param name="config"></param>
     /// <returns>HandResponseオブジェクト</returns>
-    public HandResponse EstimateHandValue(Tiles tiles, Tile win_tile, List<Tile> dora, HandConfig config)
+    public HandResponse EstimateHandValue(Tiles tiles, Tile win_tile, List<Tile> dora=null, HandConfig config=null)
     {
         dynamic _calculator = mj_calculate.HandCalculator();
         HandResponse _handResponse = new HandResponse();
@@ -235,23 +236,39 @@ public class MahjongUtils
         }
 
         //引数4   array of tiles in 136-tile format
-        Tiles dora_inTiles = new Tiles();
-        foreach (Tile tile in dora)
+        dynamic _dora_136Array;
+        if (dora == null)
         {
-            dora_inTiles.AddTileToList(tile);
+            _dora_136Array = "";
         }
-        dynamic _dora_136Array = ConvertPredictionsTo136Array(dora_inTiles);
+        else
+        {
+            Tiles dora_inTiles = new Tiles();
+            foreach (Tile tile in dora)
+            {
+                dora_inTiles.AddTileToList(tile);
+            }
+            _dora_136Array = ConvertPredictionsTo136Array(dora_inTiles);
+        }
 
         //引数5   HandConfig object
-        dynamic _configObject = config.GetHandConfig();
+        dynamic _configObject;
+        if (config == null)
+        {
+            _configObject = "";
+        }
+        else
+        {
+            _configObject = config.GetHandConfig();
+        }
 
         //ここで計算
         dynamic result = _calculator.estimate_hand_value(
             _tile_136Array,
             _winTile_136Array[0],
             "",     //鳴きはいったん保留しておく
-            _dora_136Array,
-            _configObject);
+            "",
+            "");
         /*
         result= _calculator.estimate_hand_value(
             mj_tiles.TilesConverter.string_to_136_array("234555", "555", "22555"),
@@ -262,12 +279,24 @@ public class MahjongUtils
         */
 
         //dynamic resul から HandConigクラスへの変換
+        if (result == null)
+        {
+            Debug.LogError("点数計算が失敗しました");
+            return null;
+        }
         Debug.Log(result.cost["main"]);
+
+        MemberInfo[] menberInfo = result.yaku.GetType().GetMembers();
+        foreach(MemberInfo m in menberInfo)
+        {
+            //Debug.Log(m);
+        }
+
         _handResponse.cost_main = result.cost["main"];
         _handResponse.cost_aditional = result.cost["additional"];
         _handResponse.han=result.han;
         _handResponse.fu=result.fu;
-        _handResponse.yaku=result.yaku;
+        _handResponse.yaku= result.yaku.ToString();
 
         return _handResponse;
     }

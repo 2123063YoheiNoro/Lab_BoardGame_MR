@@ -10,7 +10,7 @@ public class HandResponse
     public int cost_aditional;
     public int han;
     public int fu;
-    public dynamic yaku;
+    public string yaku;
 
     public HandResponse(int cost_main = 0, int cost_aditional = 0, int han = 0, int fu = 0, dynamic yaku = null)
     {
