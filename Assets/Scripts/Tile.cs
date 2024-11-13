@@ -53,6 +53,38 @@ public class Tile : IEquatable<Tile>
     [field: SerializeField] public int Number { get; private set; } = -1;
     [field: SerializeField] public int Id_37 { get; private set; }
 
+    /// <summary>
+    /// スプライトのアドレッサブルのアドレスを取得する関数
+    /// </summary>
+    /// <returns></returns>
+    public string GetSpriteAddress()
+    {
+        //TileSprite_m1
+        //ここハードコードなの気持ち悪い 余裕出来たら直す
+        string pre = "TileSprite_";
+        string group, number;
+        number=this.Number.ToString();
+        switch (this.type)
+        {
+            case TileType.MAN:
+                group = "m";
+                break;
+            case TileType.PIN:
+                group = "p";
+                break;
+            case TileType.SOU:
+                group = "s";
+                break;
+            case TileType.HONOR:
+                group = "z";
+                break;
+            default:    //break入ったらエラー確定だからここ必要？
+                group = "";
+                break;
+        }
+        return pre + group + number;
+    }
+
     public bool Equals(Tile tile)
     {
         return this.Id_37 == tile.Id_37;
@@ -68,7 +100,7 @@ public class Tile : IEquatable<Tile>
 /// 複数の牌をまとめて扱うためのクラス
 /// </summary>
 [Serializable]
-public class Tiles:IEquatable<Tiles>
+public class Tiles : IEquatable<Tiles>
 {
     public Tiles(string man = "", string pin = "", string sou = "", string honor = "", List<Meld> melds = null)
     {
@@ -217,7 +249,7 @@ public class Tiles:IEquatable<Tiles>
     public bool Equals(Tiles other)
     {
         return TilesList.SequenceEqual(other.TilesList)
-            &&MeldsList.SequenceEqual(other.MeldsList);
+            && MeldsList.SequenceEqual(other.MeldsList);
     }
 
     [field: SerializeField] public List<Tile> TilesList { get; private set; }

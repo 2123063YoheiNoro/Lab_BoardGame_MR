@@ -20,19 +20,19 @@ public class Meld : IEquatable<Meld>
         NUKI
     }
     public MeldType meldType;
-    public Tiles tiles;
+    public List<Tile> tiles;
 
     public Meld(MeldType type, Tiles tiles)
     {
         mj_meld = Py.Import("mahjong.meld");
         this.meldType = type;
-        this.tiles = tiles;
+        this.tiles = new List<Tile>(tiles.TilesList);
     }
     public Meld(MeldType type, string man, string pin, string sou, string honor)
     {
         mj_meld = Py.Import("mahjong.meld");
         this.meldType = type;
-        tiles = new Tiles(man, pin, sou, honor);
+        tiles = new Tiles(man, pin, sou, honor).TilesList;
     }
 
     //鳴きの種類と牌の組み合わせが有効かどうかを返す
@@ -72,11 +72,11 @@ public class Meld : IEquatable<Meld>
         //条件→牌の総数が3つである・数牌である・連番である
 
         //牌の総数が3かどうかをチェックする
-        if (tiles.TilesList.Count != 3) return false;
+        if (tiles.Count != 3) return false;
 
         //全て同じ種類の数牌かどうかをチェックする
         Tile.TileType tmpTileType = Tile.TileType.NONE;
-        foreach (Tile t in tiles.TilesList)
+        foreach (Tile t in tiles)
         {
             //字牌が入っていたら不成立
             if (t.type == Tile.TileType.HONOR)
@@ -100,7 +100,13 @@ public class Meld : IEquatable<Meld>
 
         //連番かどうかをチェックする
         //0(赤5を表す)を5に書き換える
-        Tiles fixedTiles = tiles;
+        Tiles fixedTiles = new Tiles();
+        //tilesのヨウ素を全て持ったリストを作成する
+        foreach(Tile t in tiles)
+        {
+            fixedTiles.AddTileToList(t);
+        }
+
         if (fixedTiles.RemoveTileFromList(0, tmpTileType))
         {
             fixedTiles.AddTileToList("5", tmpTileType);
@@ -126,11 +132,11 @@ public class Meld : IEquatable<Meld>
         //条件→牌の総数が3つである・数が同じである
 
         //牌の総数が3であるかをチェックする
-        if (tiles.TilesList.Count != 3) return false;
+        if (tiles.Count != 3) return false;
 
         //数が同じであるかをチェックする
-        if ((tiles.TilesList[0].Number == tiles.TilesList[1].Number) &&
-            (tiles.TilesList[0].Number == tiles.TilesList[2].Number))
+        if ((tiles[0].Number == tiles[1].Number) &&
+            (tiles[0].Number == tiles[2].Number))
         {
             return true;
         }
@@ -148,12 +154,12 @@ public class Meld : IEquatable<Meld>
         //条件→牌の総数が4つである・数が同じである
 
         //牌の総数が4であるかをチェックする
-        if (tiles.TilesList.Count != 4) return false;
+        if (tiles.Count != 4) return false;
 
         //数が同じであるかをチェックする
-        if ((tiles.TilesList[0].Number == tiles.TilesList[1].Number) &&
-            (tiles.TilesList[0].Number == tiles.TilesList[2].Number) &&
-            (tiles.TilesList[0].Number == tiles.TilesList[3].Number))
+        if ((tiles[0].Number == tiles[1].Number) &&
+            (tiles[0].Number == tiles[2].Number) &&
+            (tiles[0].Number == tiles[3].Number))
         {
             return true;
         }
@@ -196,7 +202,13 @@ public class Meld : IEquatable<Meld>
         }
 
         //引数2   tiles136Array
-        dynamic _tiles136Array = mahjongUtils.ConvertPredictionsTo136Array(tiles);
+        Tiles _Tiles = new Tiles();
+        //tilesのヨウ素を全て持ったリストを作成する
+        foreach (Tile t in tiles)
+        {
+            _Tiles.AddTileToList(t);
+        }
+        dynamic _tiles136Array = mahjongUtils.ConvertPredictionsTo136Array(_Tiles);
 
         //引数3   opend
         bool _opend = true;

@@ -4,6 +4,7 @@ using UnityEngine;
 using Python.Runtime;
 using System.Linq;
 using System.Reflection;
+using Meta.WitAi;
 
 
 public class MahjongUtils
@@ -205,6 +206,17 @@ public class MahjongUtils
             tmpTiles.RemoveTileFromList(t);
         }
         return result;
+    }
+
+    /// <summary>
+    /// ’®”v‚ÅAè”v‚ª14–‡‚Ì‚ÉÌ‚Ä‚Ä‚à’®”v‚ğˆÛ‚Å‚«‚é”v‚ğ•Ô‚·ŠÖ”
+    /// </summary>
+    /// <param name="tiles"></param>
+    /// <returns></returns>
+    public List<Tile> GetInEffectiveTiles(Tiles tiles)
+    {
+        //–¢Š®¬III
+        return null;
     }
 
     /// <summary>
