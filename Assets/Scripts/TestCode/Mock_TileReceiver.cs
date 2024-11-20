@@ -2,12 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DllTest : MonoBehaviour
+public class Mock_TileReceiver : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log(MahjongLib.GetNumber());
+        
     }
 
     // Update is called once per frame

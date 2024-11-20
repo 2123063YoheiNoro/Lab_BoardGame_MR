@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Python.Runtime;
 using System.Linq;
+using System.Reflection;
+using Meta.WitAi;
 
 
 public class MahjongUtils
@@ -115,7 +117,7 @@ public class MahjongUtils
         if (LengthCheckArray.Sum() > 14)
         {
             Debug.LogWarning("牌の数が多すぎます");
-            return int.MaxValue;
+            return int.MinValue;
         }
         var shantenCalculator = mj_shanten.Shanten();
         int shantenresult = shantenCalculator.calculate_shanten(tileArray_34, use_chiitoitsu, use_kokushi);
@@ -155,7 +157,7 @@ public class MahjongUtils
                 if (m.IsValid() == false)
                 {
                     Debug.LogWarning("不正な副露が含まれています");
-                    return int.MaxValue;
+                    return int.MinValue;
                 }
             }
         }
@@ -166,7 +168,7 @@ public class MahjongUtils
         if (tileTotalCount > 14)
         {
             Debug.LogWarning("牌の数が多すぎます");
-            return int.MaxValue;
+            return int.MinValue;
         }
 
         var array136 = ConvertPredictionsTo136Array(tiles);
@@ -207,6 +209,17 @@ public class MahjongUtils
     }
 
     /// <summary>
+    /// 聴牌時で、手牌が14枚の時に捨てても聴牌を維持できる牌を返す関数
+    /// </summary>
+    /// <param name="tiles"></param>
+    /// <returns></returns>
+    public List<Tile> GetInEffectiveTiles(Tiles tiles)
+    {
+        //未完成！！！
+        return null;
+    }
+
+    /// <summary>
     /// 点数計算を行う関数
     /// </summary>
     /// <param name="tiles"></param>
@@ -214,7 +227,7 @@ public class MahjongUtils
     /// <param name="dora"></param>
     /// <param name="config"></param>
     /// <returns>HandResponseオブジェクト</returns>
-    public HandResponse EstimateHandValue(Tiles tiles, Tile win_tile, List<Tile> dora, HandConfig config)
+    public HandResponse EstimateHandValue(Tiles tiles, Tile win_tile, List<Tile> dora = null, HandConfig config = null)
     {
         dynamic _calculator = mj_calculate.HandCalculator();
         HandResponse _handResponse = new HandResponse();
@@ -228,30 +241,46 @@ public class MahjongUtils
         dynamic _winTile_136Array = ConvertPredictionsTo136Array(win_tile_inTiles);
 
         //引数3   array with Meld objects
-        List<dynamic> _meldObjects =new();
-        foreach(Meld m in tiles.MeldsList)
+        List<dynamic> _meldObjects = new();
+        foreach (Meld m in tiles.MeldsList)
         {
             _meldObjects.Add(m.GetMeldObject());
         }
 
         //引数4   array of tiles in 136-tile format
-        Tiles dora_inTiles = new Tiles();
-        foreach (Tile tile in dora)
+        dynamic _dora_136Array;
+        if (dora == null)
         {
-            dora_inTiles.AddTileToList(tile);
+            _dora_136Array = "";
         }
-        dynamic _dora_136Array = ConvertPredictionsTo136Array(dora_inTiles);
+        else
+        {
+            Tiles dora_inTiles = new Tiles();
+            foreach (Tile tile in dora)
+            {
+                dora_inTiles.AddTileToList(tile);
+            }
+            _dora_136Array = ConvertPredictionsTo136Array(dora_inTiles);
+        }
 
         //引数5   HandConfig object
-        dynamic _configObject = config.GetHandConfig();
+        dynamic _configObject;
+        if (config == null)
+        {
+            _configObject = "";
+        }
+        else
+        {
+            _configObject = config.GetHandConfig();
+        }
 
         //ここで計算
         dynamic result = _calculator.estimate_hand_value(
             _tile_136Array,
             _winTile_136Array[0],
             "",     //鳴きはいったん保留しておく
-            _dora_136Array,
-            _configObject);
+            "",
+            "");
         /*
         result= _calculator.estimate_hand_value(
             mj_tiles.TilesConverter.string_to_136_array("234555", "555", "22555"),
@@ -262,12 +291,17 @@ public class MahjongUtils
         */
 
         //dynamic resul から HandConigクラスへの変換
-        Debug.Log(result.cost["main"]);
-        _handResponse.cost_main = result.cost["main"];
-        _handResponse.cost_aditional = result.cost["additional"];
-        _handResponse.han=result.han;
-        _handResponse.fu=result.fu;
-        _handResponse.yaku=result.yaku;
+        if (result == null)
+        {
+            Debug.LogError("点数計算が失敗しました");
+            return null;
+        }
+
+        _handResponse.cost_main = result?.cost?["main"] ?? 0;
+        _handResponse.cost_aditional = result?.cost?["additional"] ?? 0;
+        _handResponse.han = result?.han ?? 0;
+        _handResponse.fu = result?.fu ?? 0;
+        _handResponse.yaku = result?.yaku?.ToString() ?? "";
 
         return _handResponse;
     }

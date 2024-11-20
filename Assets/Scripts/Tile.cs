@@ -53,6 +53,38 @@ public class Tile : IEquatable<Tile>
     [field: SerializeField] public int Number { get; private set; } = -1;
     [field: SerializeField] public int Id_37 { get; private set; }
 
+    /// <summary>
+    /// スプライトのアドレッサブルのアドレスを取得する関数
+    /// </summary>
+    /// <returns></returns>
+    public string GetSpriteAddress()
+    {
+        //TileSprite_m1
+        //ここハードコードなの気持ち悪い 余裕出来たら直す
+        string pre = "TileSprite_";
+        string group, number;
+        number=this.Number.ToString();
+        switch (this.type)
+        {
+            case TileType.MAN:
+                group = "m";
+                break;
+            case TileType.PIN:
+                group = "p";
+                break;
+            case TileType.SOU:
+                group = "s";
+                break;
+            case TileType.HONOR:
+                group = "z";
+                break;
+            default:    //break入ったらエラー確定だからここ必要？
+                group = "";
+                break;
+        }
+        return pre + group + number;
+    }
+
     public bool Equals(Tile tile)
     {
         return this.Id_37 == tile.Id_37;
@@ -68,7 +100,7 @@ public class Tile : IEquatable<Tile>
 /// 複数の牌をまとめて扱うためのクラス
 /// </summary>
 [Serializable]
-public class Tiles
+public class Tiles : IEquatable<Tiles>
 {
     public Tiles(string man = "", string pin = "", string sou = "", string honor = "", List<Meld> melds = null)
     {
@@ -91,6 +123,53 @@ public class Tiles
     {
         TilesList = new(tiles.TilesList);
         MeldsList = new(tiles.MeldsList);
+    }
+
+    public Tiles(IPredictions predictions)
+    {
+        TilesList = new();
+        MeldsList = new();
+        List<Prediction> predictionList = predictions.GetAllPredictions();
+        //萬子、筒子、索子、字牌の番号を割り当てる文字列
+        string man = "", sou = "", pin = "", honor = "";
+        foreach (Prediction p in predictionList)
+        {
+            //1文字目は0~9の数字、2文字目は牌の種類
+            //m:萬子 p:筒子 s:索子 z:字牌 b:裏面
+            //数字の0は赤5として扱う。0pは赤5筒
+            char num = p.class_name[0];
+            char group = p.class_name[1];
+
+            //牌の種類に対応したstring型変数に数字部分を追加する
+            switch (group)
+            {
+                case 'm':
+                    man += num.ToString();
+                    break;
+                case 'p':
+                    pin += num.ToString();
+                    break;
+                case 's':
+                    sou += num.ToString();
+                    break;
+                case 'z':
+                    honor += num.ToString();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        AddTileToList(man, Tile.TileType.MAN);
+        AddTileToList(pin, Tile.TileType.PIN);
+        AddTileToList(sou, Tile.TileType.SOU);
+        AddTileToList(honor, Tile.TileType.HONOR);
+    }
+
+    public Tiles()
+    {
+        TilesList = new();
+        MeldsList = new();
     }
 
     /// <summary>
@@ -147,6 +226,31 @@ public class Tiles
         return result;
     }
 
+    /// <summary>
+    /// 現在の手牌で点数計算が可能かを返す関数
+    /// </summary>
+    /// <returns></returns>
+    public bool IsValidHand()
+    {
+        //手牌と鳴き合わせて14枚ならあがれる
+        //カンも3枚組として解釈すれば14固定で大丈夫
+        int validTileCount = 14;
+        int count = TilesList.Count + MeldsList.Count * 3;
+        if (count == validTileCount)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public bool Equals(Tiles other)
+    {
+        return TilesList.SequenceEqual(other.TilesList)
+            && MeldsList.SequenceEqual(other.MeldsList);
+    }
 
     [field: SerializeField] public List<Tile> TilesList { get; private set; }
 
