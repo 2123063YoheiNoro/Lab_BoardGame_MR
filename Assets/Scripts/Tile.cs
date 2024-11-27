@@ -246,6 +246,10 @@ public class Tiles : IEquatable<Tiles>
         }
     }
 
+    public void SortTiles()
+    {
+        this.TilesList.Sort((x,y)=>x.Id_37-y.Id_37);
+    }
     public bool Equals(Tiles other)
     {
         return TilesList.SequenceEqual(other.TilesList)

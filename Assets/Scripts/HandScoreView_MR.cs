@@ -23,7 +23,10 @@ public class HandScoreView_MR : MonoBehaviour
     public void UpdateResult(HandResponse handResponse)
     {
         Debug.Log("役更新");
-        StopAllCoroutines();
+        if (handResponse.cost_main == 0)
+        {
+            return;
+        }
         StartCoroutine(InstanceYakuUI(handResponse));
     }
 
@@ -34,7 +37,8 @@ public class HandScoreView_MR : MonoBehaviour
         {
             Destroy(yaku);
         }
-        canvas.SetActive(false);
+        yaku_objectList.Clear();
+        //canvas.SetActive(false);
         cost.text = "";
         cost_detail.text = "";
         han.text = "";
@@ -43,14 +47,17 @@ public class HandScoreView_MR : MonoBehaviour
 
     IEnumerator InstanceYakuUI(HandResponse handResponse)
     {
-        //ClearScore();
-        canvas.SetActive(true);
+        ClearScore();
+        //canvas.SetActive(true);
+
+        List<GameObject> _yaku_objectList = new();
+
         List<string> yaku_list = ConvertYaku_To_YakuList(handResponse.yaku);
-        //役の名前とはん数を適用したテキストを作成する
+        //役の名前とはん数を適用したテキストを生成する
         foreach (string yaku in yaku_list)
         {
             GameObject yaku_element = Instantiate(yaku_prefub);
-            yaku_objectList.Add(yaku_element);
+            _yaku_objectList.Add(yaku_element);
             yaku_element.transform.SetParent(yaku_parent.transform, false);
             yaku_element.SetActive(false);
 
@@ -63,15 +70,24 @@ public class HandScoreView_MR : MonoBehaviour
             yaku_name_text.text = yaku;
             han_text.text = ""; //役ごとのはんの取得は複雑なので後回し
         }
+        //生成が終わったら参照をグローバル変数に渡しておく.これでいつでも削除可能.
+        yaku_objectList = _yaku_objectList;
 
+        Debug.Log("生成終了");
+        yield return new WaitForSeconds(1);
+        Debug.Log("生成終了2");
         //役を一つずつ表示する
-        foreach (GameObject yaku in yaku_objectList)
+        foreach (GameObject yaku in _yaku_objectList)
         {
+            Debug.Log("役表示 : ");
             //有効化して次の役の表示まで待つ
             yaku.SetActive(true);
-            yield return new WaitForSeconds(appearIntervalSec);
+
+            Debug.Log("少し待つ ");
+            yield return new WaitForSeconds(1);
         }
 
+        Debug.Log("点数表示");
         //点数を表示する
         int _cost = handResponse.cost_main + handResponse.cost_aditional * 2;
         cost.text = _cost.ToString();

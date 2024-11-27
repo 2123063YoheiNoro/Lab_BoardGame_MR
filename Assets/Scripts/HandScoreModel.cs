@@ -31,12 +31,12 @@ public class HandScoreModel : MonoBehaviour
             mahjongUtils = new();
         }
         Tiles tiles = ConvertPredictionsToTiles(predictions);
+        tiles.SortTiles();
         //シャンテン数が-1のときに点数計算を行う
         //和了時にシャンテン数が-1になる
         int shantenCount = mahjongUtils.GetShanten(tiles);
         if (shantenCount == -1)
         {
-            Debug.Log("点数計算開始");
             rpHandResponse.Value = mahjongUtils.EstimateHandValue(tiles, tiles.TilesList[0], null, null);
             handResponse = mahjongUtils.EstimateHandValue(tiles, tiles.TilesList[0], null, null);
         }
