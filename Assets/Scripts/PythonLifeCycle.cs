@@ -14,6 +14,7 @@ namespace UnityPython
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void PythonInitialize()
         {
+            Debug.Log(Runtime.PythonDLL);
             Application.quitting += PythonShutdown;
             Initialize(PythonProject);
         }
@@ -49,6 +50,7 @@ namespace UnityPython
             PythonEngine.PythonHome = pythonHome;
             PythonEngine.PythonPath = pythonPath;
 
+            Debug.Log(Python.Runtime.PythonEngine.IsInitialized);
             PythonEngine.Initialize();
         }
 
