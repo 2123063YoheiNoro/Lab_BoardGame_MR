@@ -9,15 +9,16 @@ using UnityEngine.AddressableAssets;
 public class HandScoreView_MR : MonoBehaviour
 {
     [SerializeField] private Transform yakuTextParent;  //テキストの親,テキストが生成される場所.
+    [SerializeField] private float TextSpeed = 0.5f;
+    [SerializeField] private AudioSource _audioSource;
 
-    private float appearIntervalSec = 0.75f;    //文字の表示する間隔(秒).
+    [SerializeField] private float appearIntervalSec = 0.75f;    //文字の表示する間隔(秒).
     private Coroutine _latestCoroutine = null;  //コルーチン停止用.
     private List<GameObject> _yaku_textObjectList = new List<GameObject>();  //テキスト削除用.
 
     public void UpdateResult(HandResponse handResponse)
     {
-        Debug.Log("役更新");
-        return;
+        Debug.Log("役更新 : "+handResponse.yaku);
         if (handResponse.cost_main == 0)
         {
             return;
@@ -48,6 +49,13 @@ public class HandScoreView_MR : MonoBehaviour
     {
 
         //音を鳴らす.
+        AudioLibrary audioLibrary = Addressables.LoadAssetAsync<AudioLibrary>("AudioLibrary").WaitForCompletion();
+        AudioClip ac_Agari_enable = audioLibrary.GetAudioClip(AudioType.Agari_Enable);
+        if (_audioSource != null)
+        {
+            _audioSource.PlayOneShot(ac_Agari_enable);
+        }
+
         yield return new WaitForSeconds(appearIntervalSec);
 
         //役をリスト化する.
@@ -57,7 +65,40 @@ public class HandScoreView_MR : MonoBehaviour
         foreach (string yaku in yaku_list)
         {
             //役の文字オブジェクト生成.
-            InstanceYakuTextObject(yaku);
+            GameObject yakuTextPrefab = Addressables.LoadAssetAsync<GameObject>("Result_YakuText").WaitForCompletion();
+            GameObject yakuText = Instantiate(yakuTextPrefab, yakuTextParent.position, yakuTextPrefab.transform.rotation);
+
+            //管理用のリストに追加.
+            _yaku_textObjectList.Add(yakuText);
+            //親設定.
+            yakuText.transform.SetParent(yakuTextParent);
+
+
+            //ここからコンポーネント関連.
+            //テキストの設定.
+            TMP_Text tmp_yaku = yakuText.GetComponent<TMP_Text>();
+            tmp_yaku.text = yaku;
+            tmp_yaku.ForceMeshUpdate();
+
+            yield return null;
+
+            //BoxColliderを追加する.
+            BoxCollider boxCollider = yakuText.AddComponent<BoxCollider>();
+            Bounds tmpBounds = tmp_yaku.bounds;
+            boxCollider.size = new Vector3(tmpBounds.size.x, tmpBounds.size.y, 1);  //厚みを追加する.数値は適当.
+            boxCollider.center = tmpBounds.center;
+
+            //rigid body 上方向に力を加える.
+            float yaku_speed = TextSpeed;
+            Rigidbody yaku_rb = yakuText.GetComponent<Rigidbody>();
+            yaku_rb.AddForce(Vector3.up * yaku_speed, ForceMode.VelocityChange);
+
+            //音を鳴らす
+            AudioClip ac_enableYakuText = audioLibrary.GetAudioClip(AudioType.Agari_EnableYakuText);
+            if (_audioSource != null)
+            {
+                _audioSource.PlayOneShot(ac_enableYakuText);
+            }
 
             //次の文字生成までちょっと待つ.
             yield return new WaitForSeconds(appearIntervalSec);
@@ -68,24 +109,41 @@ public class HandScoreView_MR : MonoBehaviour
 
         //点数の文字を生成する.
         InstanceScoreTextObject(handResponse);
+
+        //音を鳴らす
+        AudioClip ac_enableScoreText = audioLibrary.GetAudioClip(AudioType.Agari_EnableScoreText);
+        if (_audioSource != null)
+        {
+            _audioSource.PlayOneShot(ac_enableScoreText);
+        }
+
+
+        Addressables.Release(audioLibrary);
     }
 
     private void InstanceYakuTextObject(string yaku)
     {
         GameObject yakuTextPrefab = Addressables.LoadAssetAsync<GameObject>("Result_YakuText").WaitForCompletion();
         GameObject yakuText = Instantiate(yakuTextPrefab, yakuTextParent.position, yakuTextPrefab.transform.rotation);
+
         //管理用のリストに追加.
         _yaku_textObjectList.Add(yakuText);
         //親設定.
         yakuText.transform.SetParent(yakuTextParent);
+
+
         //ここからコンポーネント関連.
         //テキストの設定.
         TMP_Text tmp_yaku = yakuText.GetComponent<TMP_Text>();
         tmp_yaku.text = yaku;
-        //BoxColliderを追加する.テキストの文字を変更してから追加すると勝手に大きさを調整してくれるのでここで追加する.
+        tmp_yaku.ForceMeshUpdate();
+
+        //BoxColliderを追加する.
         BoxCollider boxCollider = yakuText.AddComponent<BoxCollider>();
-        //厚みが0なので設定する.とりあえず5cm.
-        boxCollider.size = new Vector3(boxCollider.size.x, boxCollider.size.y, 0.05f);
+        Bounds tmpBounds = tmp_yaku.bounds;
+        boxCollider.size = new Vector3(tmpBounds.size.x, tmpBounds.size.y, 1);
+        boxCollider.center = tmpBounds.center;
+
         //rigid body 上方向に力を加える.
         float yaku_speed = 1.0f;
         Rigidbody yaku_rb = yakuText.GetComponent<Rigidbody>();
@@ -96,14 +154,17 @@ public class HandScoreView_MR : MonoBehaviour
     {
         GameObject scoreTextPrefab = Addressables.LoadAssetAsync<GameObject>("Result_ScoreText").WaitForCompletion();
         GameObject scoreText = Instantiate(scoreTextPrefab, yakuTextParent.position, scoreTextPrefab.transform.rotation);
+
         //管理用のリストに追加.
         _yaku_textObjectList.Add(scoreText);
         //親設定.
         scoreText.transform.SetParent(yakuTextParent);
+
         //テキストの設定.
         TMP_Text tmp_score = scoreText.GetComponent<TMP_Text>();
         int cost = handResponse.cost_main + handResponse.cost_aditional * 2;
         tmp_score.text = cost.ToString();
+
         //rigid body 上方向に力を加える.
         float score_speed = 1.0f;
         Rigidbody score_rb = scoreText.GetComponent<Rigidbody>();

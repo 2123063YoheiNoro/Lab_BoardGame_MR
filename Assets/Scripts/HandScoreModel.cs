@@ -33,14 +33,61 @@ public class HandScoreModel : MonoBehaviour
         Tiles tiles = ConvertPredictionsToTiles(predictions);
         tiles.SortTiles();
         //シャンテン数が-1のときに点数計算を行う
-        //和了時にシャンテン数が-1になる
+        //(和了時にシャンテン数が-1になる)
         int shantenCount = mahjongUtils.GetShanten(tiles);
         if (shantenCount == -1)
         {
-            rpHandResponse.Value = mahjongUtils.EstimateHandValue(tiles, tiles.TilesList[0], null, null);
-            handResponse = mahjongUtils.EstimateHandValue(tiles, tiles.TilesList[0], null, null);
+            Tile winTile = GetWinTile(predictions);
+            rpHandResponse.Value = mahjongUtils.EstimateHandValue(tiles, winTile, null, null);
+            handResponse = mahjongUtils.EstimateHandValue(tiles, winTile, null, null);
         }
     }
+
+    /// <summary>
+    /// あがり牌を取得する関数.
+    /// </summary>
+    /// <returns></returns>
+    private Tile GetWinTile(IPredictions predictions)
+    {
+        //一番右にある牌をあがり牌とする.
+        List<Prediction> predictionList = predictions.GetAllPredictions();
+
+        float maxX = 0;
+        int index = 0;
+        for (int i = 0; i < predictionList.Count; i++)
+        {
+            float x = predictionList[i].x;
+            if (x > maxX)
+            {
+                maxX = x;
+                index = i;
+            }
+        }
+
+        char num = predictionList[index].class_name[0];
+        char group = predictionList[index].class_name[1];
+        int num_int = int.Parse(num.ToString());
+        Tile.TileType tileType=Tile.TileType.NONE;
+        switch (group)
+        {
+            case 'm':
+                tileType = Tile.TileType.MAN;
+                break;
+            case 'p':
+                tileType = Tile.TileType.PIN;
+                break;
+            case 's':
+                tileType = Tile.TileType.SOU;
+                break;
+            case 'z':
+                tileType = Tile.TileType.HONOR;
+                break;
+        }
+
+        Tile winTile = new Tile(num_int, tileType);
+        return winTile;
+    }
+
     private Tiles ConvertPredictionsToTiles(IPredictions predictions)
     {
         List<Prediction> predictionList = predictions.GetAllPredictions();
