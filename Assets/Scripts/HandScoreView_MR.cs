@@ -18,8 +18,9 @@ public class HandScoreView_MR : MonoBehaviour
 
     private Coroutine _latestCoroutine = null;  //コルーチン停止用.
     private List<GameObject> _yaku_textObjectList = new List<GameObject>();  //テキスト削除用.
-    [SerializeField]private HandResponse _latestValidHandResponse = null;    //変化検知用.
+    [SerializeField] private HandResponse _latestValidHandResponse = null;    //変化検知用.
     private bool _isCountDown = false;  //表示をやめるまでのカウントダウンフラグ.
+    private bool _isInstanceCoroutineRunning = false;
     [SerializeField] private float _reminingTime = 0;
 
     //非表示までのカウントダウンをする.
@@ -29,8 +30,8 @@ public class HandScoreView_MR : MonoBehaviour
         {
             _reminingTime -= Time.deltaTime;
         }
-        //カウントがなくなった、かつシーン上にテキストが残っている場合
-        if (_reminingTime < 0 && _yaku_textObjectList.Count != 0)
+        //カウントがなくなった、かつシーン上にテキストが残っている場合、かつコルーチンが走ってない場合
+        if (_reminingTime < 0 && _yaku_textObjectList.Count != 0 && !_isInstanceCoroutineRunning)
         {
             ClearScoreTextObject();
             _latestValidHandResponse = null;
@@ -39,7 +40,7 @@ public class HandScoreView_MR : MonoBehaviour
 
     public void UpdateResult(HandResponse handResponse)
     {
-        Debug.Log("役更新 : "+handResponse.yaku);
+        Debug.Log("役更新 : " + handResponse.yaku);
 
         //有効なあがりでないなら何もしない.
         if (handResponse.cost_main == 0)
@@ -87,6 +88,7 @@ public class HandScoreView_MR : MonoBehaviour
 
     private IEnumerator InstanceYakuTextObject(HandResponse handResponse)
     {
+        _isInstanceCoroutineRunning = true;
 
         //音を鳴らす.
         AudioLibrary audioLibrary = Addressables.LoadAssetAsync<AudioLibrary>("AudioLibrary").WaitForCompletion();
@@ -159,6 +161,10 @@ public class HandScoreView_MR : MonoBehaviour
 
 
         Addressables.Release(audioLibrary);
+
+        yield return new WaitForSeconds(appearIntervalSec);
+
+        _isInstanceCoroutineRunning=false;
     }
 
     private void InstanceScoreTextObject(HandResponse handResponse)
