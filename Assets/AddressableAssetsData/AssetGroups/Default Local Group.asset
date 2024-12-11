@@ -207,6 +207,26 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e65f44bf33cbe5749b6681ac67dcfa24
+    m_Address: TileModel
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5c35cf4efe0ffeb4487f55ec9e44ab02
+    m_Address: AudioLibrary
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2f2a611deb194fd4db7c997674dabc25
+    m_Address: Result_YakuText
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6657ea6237934834490c30bb3a609114
+    m_Address: Result_ScoreText
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 26816973a7523f942936f4c76a02fe53, type: 2}
   m_SchemaSet:

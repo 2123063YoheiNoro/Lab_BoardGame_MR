@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public class HandResponse
+public class HandResponse : IEquatable<HandResponse>
 {
     public int cost_main;
     public int cost_aditional;
@@ -19,5 +19,17 @@ public class HandResponse
         this.han = han;
         this.fu = fu;
         this.yaku = yaku;
+    }
+
+    //reactiveProperty用に定義しておく
+    public bool Equals(HandResponse other)
+    {
+        //全部のメンバ変数の値が同じなら同じものとして扱う
+        return 
+            this.cost_main == other.cost_main &&
+            this.cost_aditional == other.cost_aditional &&
+            this.han == other.han &&
+            this.fu == other.fu &&
+            this.yaku == other.yaku;
     }
 }

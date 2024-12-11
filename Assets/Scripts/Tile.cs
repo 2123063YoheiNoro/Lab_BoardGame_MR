@@ -61,7 +61,7 @@ public class Tile : IEquatable<Tile>
     {
         //TileSprite_m1
         //ここハードコードなの気持ち悪い 余裕出来たら直す
-        string pre = "TileSprite_";
+        string head = "TileSprite_";
         string group, number;
         number=this.Number.ToString();
         switch (this.type)
@@ -82,7 +82,41 @@ public class Tile : IEquatable<Tile>
                 group = "";
                 break;
         }
-        return pre + group + number;
+        return head + group + number;
+    }
+
+    /// <summary>
+    /// 3dオブジェクトのアドレッサブルのアドレスを取得する関数
+    /// </summary>
+    /// <returns></returns>
+    public string GetTilePrefabAddress()
+    {
+        //例:TileModel/M1.prefab
+        string head = "TileModel/";
+        string foot = ".prefab";
+        string group, number;
+
+        number = this.Number.ToString();
+        switch (this.type)
+        {
+            case TileType.MAN:
+                group = "M";
+                break;
+            case TileType.PIN:
+                group = "P";
+                break;
+            case TileType.SOU:
+                group = "S";
+                break;
+            case TileType.HONOR:
+                group = "Z";
+                break;
+            default:    //break入ったらエラー確定だからここ必要？
+                group = "";
+                break;
+        }
+
+        return head + group + number + foot;
     }
 
     public bool Equals(Tile tile)
@@ -246,6 +280,10 @@ public class Tiles : IEquatable<Tiles>
         }
     }
 
+    public void SortTiles()
+    {
+        this.TilesList.Sort((x,y)=>x.Id_37-y.Id_37);
+    }
     public bool Equals(Tiles other)
     {
         return TilesList.SequenceEqual(other.TilesList)

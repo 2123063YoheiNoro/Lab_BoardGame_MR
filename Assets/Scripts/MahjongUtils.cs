@@ -190,20 +190,24 @@ public class MahjongUtils
 
         List<Tile> result = new();
         int baseShanten = GetShanten(tiles);    //評価の基準となるシャンテン数
-        Tiles tmpTiles = new Tiles(tiles);  //いろいろ弄るのでTilesの値をコピーしたリストを使う
 
         //37種類全ての牌を1枚追加したときのシャンテン数の変化を基に有効牌を取得する
         int maxTileID = 37;
         for (int i = 0; i < maxTileID; i++)
         {
+            Tiles tmpTiles = new Tiles(tiles);  //いろいろ弄るのでTilesの値をコピーしたリストを使う
             Tile t = new Tile(i);
+            //赤牌(番号が0)は飛ばす
+            if (t.Number == 0)
+            {
+                continue;
+            }
             tmpTiles.AddTileToList(t);
             //シャンテン数が減っていた場合は返り値に追加する
             if (GetShanten(tmpTiles) < baseShanten)
             {
                 result.Add(t);
             }
-            tmpTiles.RemoveTileFromList(t);
         }
         return result;
     }

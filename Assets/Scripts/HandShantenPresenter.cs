@@ -5,7 +5,7 @@ using UniRx;
 
 public class HandShantenPresenter : MonoBehaviour
 {
-    [SerializeField] HandShantenView shantenView;
+    [SerializeField]private HandShantenView shantenView;
     [SerializeField]private HandShantenModel shantenModel;
     private void Start()
     {

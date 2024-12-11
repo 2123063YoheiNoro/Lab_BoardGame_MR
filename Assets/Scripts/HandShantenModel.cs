@@ -10,11 +10,10 @@ public class HandShantenModel : MonoBehaviour
 {
     private TilesReceiver tilesReceiver;
     private MahjongUtils mahjongUtils;
-    public ReactiveProperty<int> shanten ;
+    public ReactiveProperty<int> shanten =new() ;
 
     void Start()
     {
-        shanten = new();
         tilesReceiver = FindObjectOfType<TilesReceiver>();
         tilesReceiver.rpTiles
             .Subscribe(t => OnTileChanged(t))
@@ -33,7 +32,16 @@ public class HandShantenModel : MonoBehaviour
         {
             mahjongUtils = new();
         }
-        shanten.Value = mahjongUtils.GetShanten(tiles);
+
+        if (tiles.TilesList.Count + tiles.MeldsList.Count * 3 >= 13)
+        {
+            shanten.Value = mahjongUtils.GetShanten(tiles);
+        }
+        else
+        {
+            shanten.Value = int.MinValue;
+        }
+        Debug.Log("OnTileChanged shanten : " + shanten);
     }
 
 
