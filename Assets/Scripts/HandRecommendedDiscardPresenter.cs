@@ -1,18 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UniRx;
 
 public class HandRecommendedDiscardPresenter : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField]private HandRecommendedDiscardModel model;
+    [SerializeField] private HandRecommendedDiscardView view;
+
+    private void Start()
     {
-        
+        model.subject
+            .Subscribe(view.UpdateRecDiscard)
+            .AddTo(this);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

@@ -33,3 +33,23 @@ MonoBehaviour:
     clips:
     - {fileID: 8300000, guid: 82950c4bcfe8e7547a9d4b26e485d892, type: 3}
     volume: 1
+  - type: 6
+    clips:
+    - {fileID: 8300000, guid: 7cc60416831dd4044a8a1baa32382f5f, type: 3}
+    volume: 1
+  - type: 7
+    clips:
+    - {fileID: 8300000, guid: f0aeaae15dd96dd4ba7724e2a23815cd, type: 3}
+    volume: 1
+  - type: 8
+    clips:
+    - {fileID: 8300000, guid: 1e9642d2235d8e449ae669a62c7860ed, type: 3}
+    volume: 1
+  - type: 10
+    clips:
+    - {fileID: 8300000, guid: 86e2d30fd5d20bd498217b44e1ac48c9, type: 3}
+    volume: 1
+  - type: 11
+    clips:
+    - {fileID: 8300000, guid: 89e5cdd9d5b1e0d4f9a39ed4d2157c73, type: 3}
+    volume: 1

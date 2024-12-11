@@ -35,7 +35,10 @@ public class HandEffectiveTileView : MonoBehaviour
             StopCoroutine(_latestCoroutine);
         }
         //既にシーン上にある牌を消す.有効牌がなくなったときだけ音鳴らす.
-        ClearTiles(tuple.Item1.Count==0);
+        if (_effectiveTileList.Count != 0)
+        {
+            ClearTiles(tuple.Item1.Count == 0);
+        }
         //牌の生成を開始する.
         if (tuple.Item1.Count != 0)
         {
