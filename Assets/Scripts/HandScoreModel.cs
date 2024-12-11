@@ -41,6 +41,10 @@ public class HandScoreModel : MonoBehaviour
             rpHandResponse.Value = mahjongUtils.EstimateHandValue(tiles, winTile, null, null);
             handResponse = mahjongUtils.EstimateHandValue(tiles, winTile, null, null);
         }
+        else
+        {
+            rpHandResponse.Value = new HandResponse();
+        }
     }
 
     /// <summary>

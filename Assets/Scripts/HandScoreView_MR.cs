@@ -13,16 +13,56 @@ public class HandScoreView_MR : MonoBehaviour
     [SerializeField] private AudioSource _audioSource;
 
     [SerializeField] private float appearIntervalSec = 0.75f;    //文字の表示する間隔(秒).
+    [SerializeField] private float displayTime = 5; //表示し続ける時間(秒).
+
+
     private Coroutine _latestCoroutine = null;  //コルーチン停止用.
     private List<GameObject> _yaku_textObjectList = new List<GameObject>();  //テキスト削除用.
+    [SerializeField]private HandResponse _latestValidHandResponse = null;    //変化検知用.
+    private bool _isCountDown = false;  //表示をやめるまでのカウントダウンフラグ.
+    [SerializeField] private float _reminingTime = 0;
+
+    //非表示までのカウントダウンをする.
+    private void Update()
+    {
+        if (_isCountDown)
+        {
+            _reminingTime -= Time.deltaTime;
+        }
+        //カウントがなくなった、かつシーン上にテキストが残っている場合
+        if (_reminingTime < 0 && _yaku_textObjectList.Count != 0)
+        {
+            ClearScoreTextObject();
+            _latestValidHandResponse = null;
+        }
+    }
 
     public void UpdateResult(HandResponse handResponse)
     {
         Debug.Log("役更新 : "+handResponse.yaku);
+
+        //有効なあがりでないなら何もしない.
         if (handResponse.cost_main == 0)
         {
+            //非表示までのカウントダウン開始.
+            if (!_isCountDown)
+            {
+                StartCountDown();
+            }
             return;
         }
+        //前回のあがりと同じなら何もしない.一瞬だけ牌の認識が途切れた時想定.
+        else if (handResponse.Equals(_latestValidHandResponse))
+        {
+            StopCountDown();
+            return;
+        }
+        else
+        {
+            StopCountDown();
+        }
+
+        _latestValidHandResponse = handResponse;
 
         //演出中に更新はいったら終了して新しく生成する.
         if (_latestCoroutine != null)
@@ -121,35 +161,6 @@ public class HandScoreView_MR : MonoBehaviour
         Addressables.Release(audioLibrary);
     }
 
-    private void InstanceYakuTextObject(string yaku)
-    {
-        GameObject yakuTextPrefab = Addressables.LoadAssetAsync<GameObject>("Result_YakuText").WaitForCompletion();
-        GameObject yakuText = Instantiate(yakuTextPrefab, yakuTextParent.position, yakuTextPrefab.transform.rotation);
-
-        //管理用のリストに追加.
-        _yaku_textObjectList.Add(yakuText);
-        //親設定.
-        yakuText.transform.SetParent(yakuTextParent);
-
-
-        //ここからコンポーネント関連.
-        //テキストの設定.
-        TMP_Text tmp_yaku = yakuText.GetComponent<TMP_Text>();
-        tmp_yaku.text = yaku;
-        tmp_yaku.ForceMeshUpdate();
-
-        //BoxColliderを追加する.
-        BoxCollider boxCollider = yakuText.AddComponent<BoxCollider>();
-        Bounds tmpBounds = tmp_yaku.bounds;
-        boxCollider.size = new Vector3(tmpBounds.size.x, tmpBounds.size.y, 1);
-        boxCollider.center = tmpBounds.center;
-
-        //rigid body 上方向に力を加える.
-        float yaku_speed = 1.0f;
-        Rigidbody yaku_rb = yakuText.GetComponent<Rigidbody>();
-        yaku_rb.AddForce(Vector3.up * yaku_speed, ForceMode.VelocityChange);
-    }
-
     private void InstanceScoreTextObject(HandResponse handResponse)
     {
         GameObject scoreTextPrefab = Addressables.LoadAssetAsync<GameObject>("Result_ScoreText").WaitForCompletion();
@@ -169,6 +180,17 @@ public class HandScoreView_MR : MonoBehaviour
         float score_speed = 1.0f;
         Rigidbody score_rb = scoreText.GetComponent<Rigidbody>();
         score_rb.AddForce(Vector3.up * score_speed, ForceMode.VelocityChange);
+    }
+
+    private void StartCountDown()
+    {
+        _isCountDown = true;
+        _reminingTime = displayTime;
+    }
+
+    private void StopCountDown()
+    {
+        _isCountDown = false;
     }
 
     //pythonライブラリからの入力をリストに変換する
