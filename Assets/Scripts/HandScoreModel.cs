@@ -31,15 +31,18 @@ public class HandScoreModel : MonoBehaviour
             mahjongUtils = new();
         }
         Tiles tiles = ConvertPredictionsToTiles(predictions);
-        tiles.SortTiles();
-        //シャンテン数が-1のときに点数計算を行う
-        //(和了時にシャンテン数が-1になる)
-        int shantenCount = mahjongUtils.GetShanten(tiles);
-        if (shantenCount == -1)
+        //シャンテン数が-1のとき、かつ牌の枚数が14枚の時に点数計算を行う.
+        //python側の仕様:和了時にシャンテン数が-1になる.
+        int tileCount = tiles.TilesList.Count + tiles.MeldsList.Count * 3;
+        if (tileCount == 14)
         {
-            Tile winTile = GetWinTile(predictions);
-            rpHandResponse.Value = mahjongUtils.EstimateHandValue(tiles, winTile, null, null);
-            handResponse = mahjongUtils.EstimateHandValue(tiles, winTile, null, null);
+            int shantenCount = mahjongUtils.GetShanten(tiles);
+            if (shantenCount == -1)
+            {
+                Tile winTile = GetWinTile(predictions);
+                rpHandResponse.Value = mahjongUtils.EstimateHandValue(tiles, winTile, null, null);
+                handResponse = mahjongUtils.EstimateHandValue(tiles, winTile, null, null);
+            }
         }
         else
         {
