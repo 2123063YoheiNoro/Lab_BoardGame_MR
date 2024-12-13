@@ -10,7 +10,6 @@ public class TilesReceiver : MonoBehaviour
 {
 
     static UdpClient udp;
-    IPEndPoint remoteEP = null;
     public Predictions predictions;
     public Subject<Predictions> subject = new();
     //牌の認識結果のリアクティブプロパティ　牌の座標とか向きを取得したい場合に使う
