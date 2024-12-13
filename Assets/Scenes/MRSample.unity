@@ -3166,6 +3166,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 1041473442}
+  followRotationX: 0
+  followRotationY: 1
+  followRotationZ: 0
 --- !u!1 &245737203
 GameObject:
   m_ObjectHideFlags: 0
@@ -22111,6 +22114,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 954008530}
+  followRotationX: 0
+  followRotationY: 0
+  followRotationZ: 0
 --- !u!1 &1169143025
 GameObject:
   m_ObjectHideFlags: 0
@@ -23901,6 +23907,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 57571591}
+  followRotationX: 0
+  followRotationY: 0
+  followRotationZ: 0
 --- !u!1 &1332967992
 GameObject:
   m_ObjectHideFlags: 0
