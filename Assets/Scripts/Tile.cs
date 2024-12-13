@@ -96,7 +96,18 @@ public class Tile : IEquatable<Tile>
         string foot = ".prefab";
         string group, number;
 
-        number = this.Number.ToString();
+        //”š•”•ª‚ğ”²‚«o‚·.
+        //0”Ô–Ú(Ô5”v)‚Ìƒ‚ƒfƒ‹‚Í‚È‚¢‚Ì‚Å5‚Æ‚·‚é.
+        if (this.Number == 0)
+        {
+            number = "5";
+        }
+        else
+        {
+            number = this.Number.ToString();
+        }
+
+        //í—Ş•”•ª‚ğ”²‚«o‚·.
         switch (this.type)
         {
             case TileType.MAN:

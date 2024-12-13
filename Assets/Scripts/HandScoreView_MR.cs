@@ -30,7 +30,7 @@ public class HandScoreView_MR : MonoBehaviour
         {
             _reminingTime -= Time.deltaTime;
         }
-        //カウントがなくなった、かつシーン上にテキストが残っている場合、かつコルーチンが走ってない場合
+        //カウントがなくなった、かつシーン上にテキストが残っている場合、かつコルーチンが走ってない場合.
         if (_reminingTime < 0 && _yaku_textObjectList.Count != 0 && !_isInstanceCoroutineRunning)
         {
             ClearScoreTextObject();
@@ -197,6 +197,7 @@ public class HandScoreView_MR : MonoBehaviour
     private void StopCountDown()
     {
         _isCountDown = false;
+        _reminingTime = displayTime;
     }
 
     //pythonライブラリからの入力をリストに変換する
