@@ -62,7 +62,7 @@ public class HandRecommendedDiscardView : MonoBehaviour
 
         //âπê∫ÇÃèÄîı.
         AudioLibrary audioLibrary = Addressables.LoadAssetAsync<AudioLibrary>("AudioLibrary").WaitForCompletion();
-        AudioClip ac_enableRecTile = audioLibrary.GetAudioClip(AudioType.RecommendedDIscard_Enable);
+        AudioClip ac_enableRecTile = audioLibrary.GetAudioClip(AudioType.RecommendedDiscard_Enable);
 
 
         //å¯â âπÇñ¬ÇÁÇ∑.
@@ -86,7 +86,7 @@ public class HandRecommendedDiscardView : MonoBehaviour
         if (playSE)
         {
             AudioLibrary audioLibrary = Addressables.LoadAssetAsync<AudioLibrary>("AudioLibrary").WaitForCompletion();
-            AudioClip ac_disableRecTile = audioLibrary.GetAudioClip(AudioType.RecommendedDIscard_Disable);
+            AudioClip ac_disableRecTile = audioLibrary.GetAudioClip(AudioType.RecommendedDiscard_Disable);
             if (_audioSource != null)
             {
                 _audioSource.PlayOneShot(ac_disableRecTile);

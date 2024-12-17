@@ -3,7 +3,8 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - QDSUIToggleBorderlessButton
   layers:
   - Default
   - TransparentFX
@@ -11,10 +12,10 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
+  - VirtualHole
+  - VirtualHoleMask
+  - VirtualHoleObstacle
+  - SceneMesh
   - 
   - 
   - 

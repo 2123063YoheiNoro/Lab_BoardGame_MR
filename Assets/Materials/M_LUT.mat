@@ -24,7 +24,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _LUTTexture:
-        m_Texture: {fileID: 2800000, guid: ae2a8ef8c1b5eb849a89b462e10de3ae, type: 3}
+        m_Texture: {fileID: 2800000, guid: 5059551652c0f0c40b563a0c2aba4516, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -41,6 +41,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _Float: 14.48
     - _LUTGrid: 32
     - _U: 1
     - _V: 1
