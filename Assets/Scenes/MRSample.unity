@@ -31824,6 +31824,9 @@ PrefabInstance:
       addedObject: {fileID: 140699686}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 7516989854015812296, guid: d2d6934a666a18d46b8b7a3864dc9f63, type: 3}
+      insertIndex: 1
+      addedObject: {fileID: 1489048339}
+    - targetCorrespondingSourceObject: {fileID: 7516989854015812296, guid: d2d6934a666a18d46b8b7a3864dc9f63, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1489048334}
   m_SourcePrefab: {fileID: 100100000, guid: d2d6934a666a18d46b8b7a3864dc9f63, type: 3}
@@ -31851,6 +31854,24 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7516989854395125638, guid: d2d6934a666a18d46b8b7a3864dc9f63, type: 3}
   m_PrefabInstance: {fileID: 1489048332}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1489048339
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1489048333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b023183069df224080314a560e6e1ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  blockId: 5838e892-31a4-4f65-a415-dc108aefa14c
+  instanceId: 285fca63-0b6c-4be3-a7d6-b6e1729239a4
+  version: 1
+  installationRoutineCheckpoint:
+    _installationRoutineId: 
+    _installationVariants: []
 --- !u!1 &1492420295
 GameObject:
   m_ObjectHideFlags: 0
@@ -44206,6 +44227,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2774145364867992185, guid: f5919696adaee8d4486feba592fbc854, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2774145364867992185, guid: f5919696adaee8d4486feba592fbc854, type: 3}
       propertyPath: _objects.Array.size
       value: 2
       objectReference: {fileID: 0}
@@ -44229,6 +44254,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: -8126236679484565198, guid: 589ca05316fb08a458f73bd3e924a971, type: 2}
+    - target: {fileID: 6935853521476781744, guid: f5919696adaee8d4486feba592fbc854, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8254227354351840553, guid: f5919696adaee8d4486feba592fbc854, type: 3}
       propertyPath: m_Name
       value: Tsumo
