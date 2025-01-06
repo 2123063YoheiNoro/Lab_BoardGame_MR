@@ -1,10 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class WindController : MonoBehaviour
 {
-    [SerializeField] private HandConfig _handConfig;
+    [SerializeField] private HandScoreModel _scoreModel;
+    private HandConfig _handConfig;
+
+    [SerializeField] private TMP_Text _playerWindText;
+    [SerializeField] private TMP_Text _roundWindText;
 
     private enum Wind
     {
@@ -16,6 +21,11 @@ public class WindController : MonoBehaviour
 
     private Wind _playerWind = Wind.EAST;   //é©ïó.
     private Wind _roundWind = Wind.EAST;    //èÍïó.
+
+    private void Start()
+    {
+        _handConfig = _scoreModel._handConfig;
+    }
 
     public void ChangeWind()
     {
@@ -40,6 +50,9 @@ public class WindController : MonoBehaviour
 
         _handConfig.player_wind = playerWindValue;
         _handConfig.round_wind = roundWindValue;
+
+        _playerWindText.text = $"{ConvertWindToString(_playerWind)}â∆";
+        _roundWindText.text = $"{ConvertWindToString(_roundWind)}èÍ";
     }
 
     //HandConfigÇ≈é¿ç€Ç…égÇ§ílÇ…ïœä∑Ç∑ÇÈ.
@@ -58,5 +71,21 @@ public class WindController : MonoBehaviour
         }
 
         return HandConfig.EAST;
+    }
+
+    private string ConvertWindToString(Wind wind)
+    {
+        switch (wind)
+        {
+            case Wind.EAST:
+                return "ìå";
+            case Wind.SOUTH:
+                return "ìÏ";
+            case Wind.WEST:
+                return "êº";
+            case Wind.NORTH:
+                return "ñk";
+        }
+        return "ìå";
     }
 }
