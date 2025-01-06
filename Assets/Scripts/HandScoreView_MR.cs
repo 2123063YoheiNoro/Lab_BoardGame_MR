@@ -59,6 +59,11 @@ public class HandScoreView_MR : MonoBehaviour
             }
             return;
         }
+
+        if (_latestValidHandResponse == null)
+        {
+            _latestValidHandResponse = handResponse;
+        }
         //‘O‰ñ‚Ì‚ ‚ª‚è‚Æ“¯‚¶‚È‚ç‰½‚à‚µ‚È‚¢.ˆêu‚¾‚¯”v‚Ì”F¯‚ª“rØ‚ê‚½‘z’è.
         else if (handResponse.Equals(_latestValidHandResponse))
         {

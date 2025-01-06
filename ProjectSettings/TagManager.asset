@@ -5,6 +5,14 @@ TagManager:
   serializedVersion: 2
   tags:
   - QDSUIToggleBorderlessButton
+  - Locomotion
+  - PassThrough
+  - PassThroughButton
+  - LocoButton
+  - LocoText
+  - QDSUIIcon
+  - QDSUIToggleButton
+  - RiichiStick
   layers:
   - Default
   - TransparentFX

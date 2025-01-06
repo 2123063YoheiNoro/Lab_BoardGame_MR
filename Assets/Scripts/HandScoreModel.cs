@@ -12,6 +12,7 @@ public class HandScoreModel : MonoBehaviour
     private MahjongUtils mahjongUtils;
     public ReactiveProperty<HandResponse> rpHandResponse = new();
     private HandResponse handResponse;
+    public HandConfig _handConfig;
 
 
     private void Start()
@@ -22,6 +23,7 @@ public class HandScoreModel : MonoBehaviour
             .AddTo(this);
 
         mahjongUtils = new();
+        _handConfig = new();
     }
 
     private void OnPredictionReceived(IPredictions predictions)
@@ -40,8 +42,8 @@ public class HandScoreModel : MonoBehaviour
             if (shantenCount == -1)
             {
                 Tile winTile = GetWinTile(predictions);
-                rpHandResponse.Value = mahjongUtils.EstimateHandValue(tiles, winTile, null, null);
-                handResponse = mahjongUtils.EstimateHandValue(tiles, winTile, null, null);
+                rpHandResponse.Value = mahjongUtils.EstimateHandValue(tiles, winTile, null, _handConfig);
+                handResponse = mahjongUtils.EstimateHandValue(tiles, winTile, null, _handConfig);
             }
         }
         else
