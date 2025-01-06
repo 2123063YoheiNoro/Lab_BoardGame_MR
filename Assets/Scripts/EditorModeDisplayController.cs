@@ -33,7 +33,6 @@ public class EditorModeDisplayController : MonoBehaviour
 
     private bool IsGestureDetected()
     {
-        Debug.Log($"{_OVRHand.GetFingerIsPinching(OVRHand.HandFinger.Middle)},{_OVRHand.GetFingerIsPinching(OVRHand.HandFinger.Ring)}");
         return _OVRHand.GetFingerIsPinching(OVRHand.HandFinger.Ring);
     }
 

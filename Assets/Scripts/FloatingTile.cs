@@ -30,8 +30,8 @@ public class FloatingTile : MonoBehaviour
         if (lookingPos == null) return;
         Vector3 targetRotPos = lookingPos.transform.position;
         Vector3 rotDir = targetRotPos - transform.position;
-        //オブジェクトの下側がターゲットに向くようにする.
-        Quaternion fixedRotDir = Quaternion.FromToRotation(-transform.up, rotDir) * transform.rotation;
+        //オブジェクトの正面側がターゲットに向くようにする.
+        Quaternion fixedRotDir = Quaternion.FromToRotation(transform.forward, rotDir) * transform.rotation;
         //ここから下はchatgpt.
         Quaternion deltaRotation = fixedRotDir * Quaternion.Inverse(transform.rotation);
         Vector3 axis;

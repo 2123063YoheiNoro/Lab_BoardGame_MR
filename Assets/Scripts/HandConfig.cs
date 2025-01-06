@@ -2,13 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Python.Runtime;
+
 public class HandConfig
 {
     private static int NONE = -1;
-    private static int EAST = 27;
-    private static int SOUTH = 28;
-    private static int WEST = 29;
-    private static int NORTH = 30;
+    public static int EAST = 27;
+    public static int SOUTH = 28;
+    public static int WEST = 29;
+    public static int NORTH = 30;
 
     public bool is_tsumo = false;
     public bool is_riichi = false;

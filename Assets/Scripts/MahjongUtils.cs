@@ -283,8 +283,8 @@ public class MahjongUtils
             _tile_136Array,
             _winTile_136Array[0],
             "",     //–Â‚«‚Í‚¢‚Á‚½‚ñ•Û—¯‚µ‚Ä‚¨‚­
-            "",
-            "");
+            "",     //ƒhƒ‰‚à•Û—¯‚µ‚Ä‚¨‚­
+            _configObject);    
         /*
         result= _calculator.estimate_hand_value(
             mj_tiles.TilesConverter.string_to_136_array("234555", "555", "22555"),

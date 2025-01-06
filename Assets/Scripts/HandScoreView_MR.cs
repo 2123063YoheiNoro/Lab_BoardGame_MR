@@ -9,6 +9,12 @@ using UnityEngine.AddressableAssets;
 public class HandScoreView_MR : MonoBehaviour
 {
     [SerializeField] private Transform yakuTextParent;  //テキストの親,テキストが生成される場所.
+    [SerializeField] private Vector3 _instancePosoffset = Vector3.zero;
+
+    [SerializeField] private GameObject _preParticleEffect; //点数表示の前に生成されるパーティクル.
+    [SerializeField] private GameObject _virtualHole;   //天井に空く穴.
+    [SerializeField] private LayerMask _sceneMeshLayer; //天井のレイヤー.
+
     [SerializeField] private float TextSpeed = 0.5f;
     [SerializeField] private AudioSource _audioSource;
 
@@ -34,6 +40,7 @@ public class HandScoreView_MR : MonoBehaviour
         if (_reminingTime < 0 && _yaku_textObjectList.Count != 0 && !_isInstanceCoroutineRunning)
         {
             ClearScoreTextObject();
+            _virtualHole.gameObject.SetActive(false);
             _latestValidHandResponse = null;
         }
     }
@@ -51,6 +58,11 @@ public class HandScoreView_MR : MonoBehaviour
                 StartCountDown();
             }
             return;
+        }
+
+        if (_latestValidHandResponse == null)
+        {
+            _latestValidHandResponse = handResponse;
         }
         //前回のあがりと同じなら何もしない.一瞬だけ牌の認識が途切れた時想定.
         else if (handResponse.Equals(_latestValidHandResponse))
@@ -90,6 +102,13 @@ public class HandScoreView_MR : MonoBehaviour
     {
         _isInstanceCoroutineRunning = true;
 
+        //エフェクトの表示.
+        Instantiate(_preParticleEffect, yakuTextParent.transform.position, _preParticleEffect.transform.rotation);
+        _virtualHole.gameObject.SetActive(true);
+
+        //テキストの生成位置(天井)を取得.
+        Vector3 instancePos = GetInstantiatePosition();
+
         //音を鳴らす.
         AudioLibrary audioLibrary = Addressables.LoadAssetAsync<AudioLibrary>("AudioLibrary").WaitForCompletion();
         AudioClip ac_Agari_enable = audioLibrary.GetAudioClip(AudioType.Agari_Enable);
@@ -108,7 +127,7 @@ public class HandScoreView_MR : MonoBehaviour
         {
             //役の文字オブジェクト生成.
             GameObject yakuTextPrefab = Addressables.LoadAssetAsync<GameObject>("Result_YakuText").WaitForCompletion();
-            GameObject yakuText = Instantiate(yakuTextPrefab, yakuTextParent.position, yakuTextPrefab.transform.rotation);
+            GameObject yakuText = Instantiate(yakuTextPrefab, instancePos, yakuTextParent.transform.rotation);
 
             //管理用のリストに追加.
             _yaku_textObjectList.Add(yakuText);
@@ -130,10 +149,10 @@ public class HandScoreView_MR : MonoBehaviour
             boxCollider.size = new Vector3(tmpBounds.size.x, tmpBounds.size.y, 1);  //厚みを追加する.数値は適当.
             boxCollider.center = tmpBounds.center;
 
-            //rigid body 上方向に力を加える.
+            //rigid body 下方向に力を加える.
             float yaku_speed = TextSpeed;
             Rigidbody yaku_rb = yakuText.GetComponent<Rigidbody>();
-            yaku_rb.AddForce(Vector3.up * yaku_speed, ForceMode.VelocityChange);
+            yaku_rb.AddForce(-Vector3.up * yaku_speed, ForceMode.VelocityChange);
 
             //音を鳴らす
             AudioClip ac_enableYakuText = audioLibrary.GetAudioClip(AudioType.Agari_EnableYakuText);
@@ -164,13 +183,16 @@ public class HandScoreView_MR : MonoBehaviour
 
         yield return new WaitForSeconds(appearIntervalSec);
 
-        _isInstanceCoroutineRunning=false;
+        _isInstanceCoroutineRunning = false;
     }
 
     private void InstanceScoreTextObject(HandResponse handResponse)
     {
+        //テキストの生成位置(天井)を取得.
+        Vector3 instancePos = GetInstantiatePosition();
+
         GameObject scoreTextPrefab = Addressables.LoadAssetAsync<GameObject>("Result_ScoreText").WaitForCompletion();
-        GameObject scoreText = Instantiate(scoreTextPrefab, yakuTextParent.position, scoreTextPrefab.transform.rotation);
+        GameObject scoreText = Instantiate(scoreTextPrefab, instancePos, scoreTextPrefab.transform.rotation);
 
         //管理用のリストに追加.
         _yaku_textObjectList.Add(scoreText);
@@ -182,10 +204,32 @@ public class HandScoreView_MR : MonoBehaviour
         int cost = handResponse.cost_main + handResponse.cost_aditional * 2;
         tmp_score.text = cost.ToString();
 
-        //rigid body 上方向に力を加える.
+        //rigid body 下方向に力を加える.
         float score_speed = 1.0f;
         Rigidbody score_rb = scoreText.GetComponent<Rigidbody>();
-        score_rb.AddForce(Vector3.up * score_speed, ForceMode.VelocityChange);
+        score_rb.AddForce(-Vector3.up * score_speed, ForceMode.VelocityChange);
+    }
+
+
+    private Vector3 GetInstantiatePosition()
+    {
+        Vector3 result;
+        //真上にレイを打って当たった場所を返す.
+        Ray ray = new Ray(Vector3.up, yakuTextParent.position);
+        RaycastHit hitInfo;
+        float length = 5;
+        //レイを飛ばす.
+        if (Physics.Raycast(ray, out hitInfo, length, _sceneMeshLayer))
+        {
+            result = hitInfo.point + _instancePosoffset;
+        }
+        else
+        {
+            //レイが当たらなければ親の位置を返しておく.
+            result = yakuTextParent.position;
+        }
+        return result;
+
     }
 
     private void StartCountDown()

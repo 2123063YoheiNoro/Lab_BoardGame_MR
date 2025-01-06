@@ -53,3 +53,15 @@ MonoBehaviour:
     clips:
     - {fileID: 8300000, guid: 89e5cdd9d5b1e0d4f9a39ed4d2157c73, type: 3}
     volume: 1
+  - type: 12
+    clips:
+    - {fileID: 8300000, guid: 5c1e88fdb1f3b294c86bb10a891a9614, type: 3}
+    volume: 1
+  - type: 13
+    clips:
+    - {fileID: 8300000, guid: 52414340db685b74fb87f0aada7a9ccf, type: 3}
+    volume: 1
+  - type: 14
+    clips:
+    - {fileID: 8300000, guid: 70c16955626815542a3c3be37d555b10, type: 3}
+    volume: 1

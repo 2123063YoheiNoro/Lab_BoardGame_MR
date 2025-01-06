@@ -16,6 +16,11 @@ public enum AudioType
     Agari_EnableScoreText,
     Agari_Disable,
 
-    RecommendedDIscard_Enable,
-    RecommendedDIscard_Disable
+    RecommendedDiscard_Enable,
+    RecommendedDiscard_Disable,
+
+    Environment_BreakCeiling,
+
+    BGM_Default,
+    BGM_Tenpai
 }
