@@ -23,6 +23,12 @@ public class VirtualHole : MonoBehaviour
         Vector3 position = GetHolePosition();
         transform.position = position;
     }
+
+    private void Update()
+    {
+        Vector3 position = GetHolePosition();
+        transform.position = position;
+    }
     private Vector3 GetHolePosition()
     {
         Vector3 result;
