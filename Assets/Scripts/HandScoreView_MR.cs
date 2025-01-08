@@ -215,7 +215,7 @@ public class HandScoreView_MR : MonoBehaviour
     {
         Vector3 result;
         //^ã‚ÉƒŒƒC‚ğ‘Å‚Á‚Ä“–‚½‚Á‚½êŠ‚ğ•Ô‚·.
-        Ray ray = new Ray(Vector3.up, yakuTextParent.position);
+        Ray ray = new Ray(yakuTextParent.position, Vector3.up);
         RaycastHit hitInfo;
         float length = 5;
         //ƒŒƒC‚ğ”ò‚Î‚·.

@@ -10,6 +10,8 @@ public class VirtualHole : MonoBehaviour
     [SerializeField] private AudioSource _audioSource;
     private AudioClip _audioClip;
     private AudioLibrary _audioLibrary;
+
+    [SerializeField] LineRenderer _lineRenderer; //デバッグ用.
     private void OnEnable()
     {
         //表示された瞬間に音を鳴らす.
@@ -33,7 +35,7 @@ public class VirtualHole : MonoBehaviour
     {
         Vector3 result;
         //真上にレイを打って当たった場所を返す.
-        Ray ray = new Ray(Vector3.up, defaultPositon.position);
+        Ray ray = new Ray(defaultPositon.position,Vector3.up);
         RaycastHit hitInfo;
         float length = 5;
         //レイを飛ばす.
@@ -45,6 +47,13 @@ public class VirtualHole : MonoBehaviour
         {
             //レイが当たらなければ親の位置を返しておく.
             result = defaultPositon.position;
+        }
+
+        //デバッグ用.
+        if(_lineRenderer != null)
+        {
+            _lineRenderer.SetPosition(0, defaultPositon.position);
+            _lineRenderer.SetPosition(1, result);
         }
         return result;
 
